@@ -1,0 +1,31 @@
+{
+  "name": "3d_chess",
+  "version": "1.0.0",
+  "description": "Computer Graphics final project Lisi, Piemonti, Vecchio",
+  "main": "./scripts/index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo 'Nothing yet!'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vechus/3d_chess.git"
+  },
+  "keywords": [
+    "3d",
+    "chess",
+    "webgl"
+  ],
+  "author": "Alessandro Lisi, Alice Piemonti, Luca Vecchio",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Vechus/3d_chess/issues"
+  },
+  "homepage": "https://github.com/Vechus/3d_chess#readme",
+  "dependencies": {
+    "js-chess-engine": "^0.11.3",
+    "quaternion": "^1.1.0"
+  }
+}
