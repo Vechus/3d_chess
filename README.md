@@ -2,7 +2,7 @@
 Computer Graphics final project
 ## How to run
 
-1. Install the js dependencies. We use `npm` as packet manager:
+1. Install the js dependencies. We use `npm` as package manager:
     ```
     npm install 
     ```
