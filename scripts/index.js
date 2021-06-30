@@ -1,4 +1,6 @@
+import {Game} from "../scripts/js-chess-engine.mjs";
+
 console.log("Hello Ale, Ali and Luca!")
 
-const jsChessEngine = require('js-chess-engine');
-const game = new jsChessEngine.Game();
+const game = new Game();
+console.log(game.exportJson());
