@@ -62,19 +62,23 @@ var cubeS = 0.5;
 
 async function loadObj(pathToModel) {
     //This line must be in an async function
-    var objStr = await utils.get_objstr(pathToModel);
-    var objModel = new OBJ.Mesh(objStr);
+    //var objStr = await utils.get_objstr(pathToModel);
+    var objModel = new OBJ.Mesh(pathToModel);
     var modelVertices = objModel.vertices; //Array of vertices
     var modelNormals = objModel.normals; //Array of normals
     var modelIndices = objModel.indices; //Array of indices
     var modelTexCoords = objModel.textures; //Array of uv coordinates
+
+    return (modelVertices, modelNormals, modelIndices, modelTexCoords)
 }
 
 function main() {
 
-
+    //** TRY TO LOAD AN OBJ ** TEST **//
+    let carGameObject = loadObj("../aletest/cat.obj")
     // Get a WebGL context
     canvas = document.getElementById("game-canvas");
+
     gl = canvas.getContext("webgl2");
     if (!gl) {
         document.write("GL context not opened");
