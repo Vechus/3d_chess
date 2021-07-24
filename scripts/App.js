@@ -1,3 +1,4 @@
+
 var vertexShaderSource = `#version 300 es
 
 in vec3 a_position;
@@ -23,6 +24,7 @@ void main() {
   outColor = vec4(colorV,1.0);
 }
 `;
+
 var canvas;
 let speed = 0;
 var gl = null,
@@ -33,12 +35,18 @@ var projectionMatrix,
     viewMatrix,
     worldMatrix, vao, matrixLocation;
 var lastUpdateTime = (new Date).getTime();
-//Camera parameters
-var cx = 0.5;
+
+//*** GLOBALS ****///
+
+//Scene
+
+let sceneTree = []
+//Camera coordinates
+var cx = 0.0;
 var cy = 0.0;
 var cz = 1.0;
 var elevation = 0.0;
-var angle = -30.0;
+var angle = 0.0;
 
 var delta = 0.1;
 var flag = 0;
@@ -52,8 +60,18 @@ var cubeRy = 0.0;
 var cubeRz = 0.0;
 var cubeS = 0.5;
 
+async function loadObj(pathToModel) {
+    //This line must be in an async function
+    var objStr = await utils.get_objstr(pathToModel);
+    var objModel = new OBJ.Mesh(objStr);
+    var modelVertices = objModel.vertices; //Array of vertices
+    var modelNormals = objModel.normals; //Array of normals
+    var modelIndices = objModel.indices; //Array of indices
+    var modelTexCoords = objModel.textures; //Array of uv coordinates
+}
 
 function main() {
+
 
     // Get a WebGL context
     canvas = document.getElementById("game-canvas");
