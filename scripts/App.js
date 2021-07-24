@@ -1,188 +1,196 @@
-
-var vertexShaderSource = `#version 300 es
-
-in vec3 a_position;
-in vec3 a_color;
-out vec3 colorV;
-
-uniform mat4 matrix; 
-void main() {
-  colorV = a_color;
-  gl_Position = matrix * vec4(a_position,1.0);
-}
-`;
-
-var fragmentShaderSource = `#version 300 es
-
-precision mediump float;
-
-
-in vec3 colorV;
-out vec4 outColor;
-
-void main() {
-  outColor = vec4(colorV,1.0);
-}
-`;
-
-var canvas;
-let speed = 0;
-var gl = null,
-    program = null;
-
-var projectionMatrix,
-    perspectiveMatrix,
-    viewMatrix,
-    worldMatrix, vao, matrixLocation;
-var lastUpdateTime = (new Date).getTime();
-
-//*** GLOBALS ****///
-
-//Scene
-
-let sceneTree = []
-//Camera coordinates
-var cx = 0.0;
-var cy = 0.0;
-var cz = 1.0;
-var elevation = 0.0;
-var angle = 0.0;
-
-var delta = 0.1;
-var flag = 0;
-
-//Cube parameters
-var cubeTx = 0.0;
-var cubeTy = 0.0;
-var cubeTz = -1.0;
-var cubeRx = 0.0;
-var cubeRy = 0.0;
-var cubeRz = 0.0;
-var cubeS = 0.5;
-
-async function loadObj(pathToModel) {
-    //This line must be in an async function
-    var objStr = await utils.get_objstr(pathToModel);
-    var objModel = new OBJ.Mesh(objStr);
-    var modelVertices = objModel.vertices; //Array of vertices
-    var modelNormals = objModel.normals; //Array of normals
-    var modelIndices = objModel.indices; //Array of indices
-    var modelTexCoords = objModel.textures; //Array of uv coordinates
-}
-
-function main() {
-
-
-    // Get a WebGL context
-    canvas = document.getElementById("game-canvas");
-    gl = canvas.getContext("webgl2");
+async function main() {
+    // Get A WebGL context
+    const canvas = document.getElementById('game-canvas');
+    const gl = canvas.getContext("webgl2");
     if (!gl) {
-        document.write("GL context not opened");
         return;
     }
-    utils.resizeCanvasToDisplaySize(gl.canvas);
 
-    //use this aspect ratio to keep proportions
-    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-    gl.clearColor(0, 0, 0, 0);
+    // Tell the twgl to match position with a_position etc..
+    twgl.setAttributePrefix("a_");
 
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    gl.enable(gl.CULL_FACE);
-    gl.enable(gl.DEPTH_TEST);
+    const vs = `#version 300 es
+  in vec4 a_position;
+  in vec3 a_normal;
+  in vec4 a_color;
 
-    // create GLSL shaders, upload the GLSL source, compile the shaders and link them
-    let vertexShader = utils.createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
-    let fragmentShader = utils.createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
-    let program = utils.createProgram(gl, vertexShader, fragmentShader);
+  uniform mat4 u_projection;
+  uniform mat4 u_view;
+  uniform mat4 u_world;
 
-    // look up where the vertex data needs to go.
-    let positionAttributeLocation = gl.getAttribLocation(program, "a_position");
-    let colorAttributeLocation = gl.getAttribLocation(program, "a_color");
-    matrixLocation = gl.getUniformLocation(program, "matrix");
+  out vec3 v_normal;
+  out vec4 v_color;
 
+  void main() {
+    gl_Position = u_projection * u_view * u_world * a_position;
+    v_normal = mat3(u_world) * a_normal;
+    v_color = a_color;
+  }
+  `;
 
-    perspectiveMatrix = utils.MakePerspective(90, gl.canvas.width / gl.canvas.height, 0.1, 100.0);
+    const fs = `#version 300 es
+  precision highp float;
 
-    // Create a vertex array object (attribute state)
-    vao = gl.createVertexArray();
+  in vec3 v_normal;
+  in vec4 v_color;
 
-    // and make it the one we're currently working with
-    gl.bindVertexArray(vao);
-    // Create a buffer and put three 2d clip space points in it
-    let positionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-    gl.enableVertexAttribArray(positionAttributeLocation);
-    gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
+  uniform vec4 u_diffuse;
+  uniform vec3 u_lightDirection;
 
-    let colorBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
-    gl.enableVertexAttribArray(colorAttributeLocation);
-    gl.vertexAttribPointer(colorAttributeLocation, 3, gl.FLOAT, false, 0, 0);
+  out vec4 outColor;
 
-    let indexBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
-
-    drawScene();
+  void main () {
+    vec3 normal = normalize(v_normal);
+    float fakeLight = dot(u_lightDirection, normal) * .5 + .5;
+    vec4 diffuse = u_diffuse * v_color;
+    outColor = vec4(diffuse.rgb * fakeLight, diffuse.a);
+  }
+  `;
 
 
-    function animate() {
-        let currentTime = (new Date).getTime();
+    // compiles and links the shaders, looks up attribute and uniform locations
+    const meshProgramInfo = twgl.createProgramInfo(gl, [vs, fs]);
 
-        if (lastUpdateTime) {
-            //currentTime – lastUpdateTime is the time passed between frames
+    const obj = await loader.load_obj('../aletest/uploads_files_2787791_Mercedes+Benz+GLS+580.obj');
 
-            let dt = (currentTime - lastUpdateTime);
-            var deltaC = (1/2 * dt) / 250.0;
-            //build up speed
-            deltaC = deltaC + 1/3 * speed;
+    const parts = obj.geometries.map(({data}) => {
+        // Because data is just named arrays like this
+        //
+        // {
+        //   position: [...],
+        //   texcoord: [...],
+        //   normal: [...],
+        // }
+        //
+        // and because those names match the attributes in our vertex
+        // shader we can pass it directly into `createBufferInfoFromArrays`
+        // from the article "less code more fun".
 
-            speed = speed + 0.01;
-
-            if (flag === 0) cubeTx += deltaC;
-            else cubeTx -= deltaC;
-            if (cubeTx >= 1.5) {
-                flag = 1
-                speed = 0;
+        if (data.color) {
+            if (data.position.length === data.color.length) {
+                // it's 3. The our helper library assumes 4 so we need
+                // to tell it there are only 3.
+                data.color = { numComponents: 3, data: data.color };
             }
-            else if (cubeTx <= -1.5) {
-                flag = 0;
-                speed = 0;
+        } else {
+            // there are no vertex colors so just use constant white
+            data.color = { value: [1, 1, 1, 1] };
+        }
+
+        // create a buffer for each array by calling
+        // gl.createBuffer, gl.bindBuffer, gl.bufferData
+        const bufferInfo = twgl.createBufferInfoFromArrays(gl, data);
+        const vao = twgl.createVAOFromBufferInfo(gl, meshProgramInfo, bufferInfo);
+        return {
+            material: {
+                u_diffuse: [1, 1, 1, 1],
+            },
+            bufferInfo,
+            vao,
+        };
+    });
+
+    function getExtents(positions) {
+        const min = positions.slice(0, 3);
+        const max = positions.slice(0, 3);
+        for (let i = 3; i < positions.length; i += 3) {
+            for (let j = 0; j < 3; ++j) {
+                const v = positions[i + j];
+                min[j] = Math.min(v, min[j]);
+                max[j] = Math.max(v, max[j]);
             }
         }
-        worldMatrix = utils.MakeWorld(cubeTx, cubeTy, cubeTz, cubeRx, cubeRy, cubeRz, cubeS);
-        lastUpdateTime = currentTime; //Need to update it for the next frame
+        return {min, max};
     }
 
+    function getGeometriesExtents(geometries) {
+        return geometries.reduce(({min, max}, {data}) => {
+            const minMax = getExtents(data.position);
+            return {
+                min: min.map((min, ndx) => Math.min(minMax.min[ndx], min)),
+                max: max.map((max, ndx) => Math.max(minMax.max[ndx], max)),
+            };
+        }, {
+            min: Array(3).fill(Number.POSITIVE_INFINITY),
+            max: Array(3).fill(Number.NEGATIVE_INFINITY),
+        });
+    }
 
-    function drawScene() {
-        animate();
+    const extents = getGeometriesExtents(obj.geometries);
+    const range = m4.subtractVectors(extents.max, extents.min);
+    // amount to move the object so its center is at the origin
+    const objOffset = m4.scaleVector(
+        m4.addVectors(
+            extents.min,
+            m4.scaleVector(range, 0.5)),
+        -1);
+    const cameraTarget = [0, 0, 0];
+    // figure out how far away to move the camera so we can likely
+    // see the object.
+    const radius = m4.length(range) * 1.2;
+    const cameraPosition = m4.addVectors(cameraTarget, [
+        0,
+        2,
+        radius,
+    ]);
+    // Set zNear and zFar to something hopefully appropriate
+    // for the size of this object.
+    const zNear = radius / 100;
+    const zFar = radius * 3;
 
+    function degToRad(deg) {
+        return deg * Math.PI / 180;
+    }
+
+    function render(time) {
+        time *= 0.001;  // convert to seconds
+
+        twgl.resizeCanvasToDisplaySize(gl.canvas);
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-        gl.clearColor(0, 0, 0, 0);
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.enable(gl.DEPTH_TEST);
-        gl.enable(gl.CULL_FACE);
-        gl.useProgram(program);
 
-        // Bind the attribute/buffer set we want.
-        gl.bindVertexArray(vao);
+        const fieldOfViewRadians = degToRad(100);
+        const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+        const projection = m4.perspective(fieldOfViewRadians, aspect, zNear, zFar);
 
-        let viewMatrix = utils.MakeView(cx, cy, cz, elevation, angle);
+        const up = [0, 1, 0];
+        // Compute the camera's matrix using look at.
+        const camera = m4.lookAt(cameraPosition, cameraTarget, up);
 
-        projectionMatrix = utils.multiplyMatrices(viewMatrix, worldMatrix);
-        projectionMatrix = utils.multiplyMatrices(perspectiveMatrix, projectionMatrix);
+        // Make a view matrix from the camera matrix.
+        const view = m4.inverse(camera);
 
-        gl.uniformMatrix4fv(matrixLocation, gl.FALSE, utils.transposeMatrix(projectionMatrix));
+        const sharedUniforms = {
+            u_lightDirection: m4.normalize([-1, 3, 5]),
+            u_view: view,
+            u_projection: projection,
+        };
 
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-        gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
-        window.requestAnimationFrame(drawScene);
+        gl.useProgram(meshProgramInfo.program);
+
+        // calls gl.uniform
+        twgl.setUniforms(meshProgramInfo, sharedUniforms);
+
+        // compute the world matrix once since all parts
+        // are at the same space.
+        let u_world = m4.yRotation(time);
+        u_world = m4.translate(u_world, ...objOffset);
+
+        for (const {bufferInfo, vao, material} of parts) {
+            // set the attributes for this part.
+            gl.bindVertexArray(vao);
+            // calls gl.uniform
+            twgl.setUniforms(meshProgramInfo, {
+                u_world,
+                u_diffuse: material.u_diffuse,
+            });
+            // calls gl.drawArrays or gl.drawElements
+            twgl.drawBufferInfo(gl, bufferInfo);
+        }
+
+        requestAnimationFrame(render);
     }
-
+    requestAnimationFrame(render);
 }
 
-window.onload = main;
-
+main();
