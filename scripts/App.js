@@ -51,7 +51,7 @@ async function main() {
     // compiles and links the shaders, looks up attribute and uniform locations
     const meshProgramInfo = twgl.createProgramInfo(gl, [vs, fs]);
 
-    const obj = await loader.load_obj('../aletest/uploads_files_2787791_Mercedes+Benz+GLS+580.obj');
+    const obj = await loader.load_obj('../assets/models/Queen.obj');
 
     const parts = obj.geometries.map(({data}) => {
         // Because data is just named arrays like this
