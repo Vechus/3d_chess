@@ -128,7 +128,7 @@ async function main() {
     // figure out how far away to move the camera so we can likely
     // see the object.
     const radius = m4.length(range) * 1.2;
-    const cameraPosition = m4.addVectors(cameraTarget, [
+    let cameraPosition = m4.addVectors(cameraTarget, [
         0,
         2,
         radius,
@@ -145,17 +145,30 @@ async function main() {
     function render(time) {
         time *= 0.001;  // convert to seconds
 
+        const INPUT_SCALE = 1;
+        //** GET INPUT **//
+        let cam_x_pos = document.getElementById("cxpos").value/INPUT_SCALE;
+        let cam_y_pos = document.getElementById("cypos").value/INPUT_SCALE;
+        let cam_z_pos = document.getElementById("czpos").value/INPUT_SCALE;
+
+
         twgl.resizeCanvasToDisplaySize(gl.canvas);
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
         gl.enable(gl.DEPTH_TEST);
 
-        const fieldOfViewRadians = degToRad(100);
+        const fieldOfViewRadians = degToRad(70);
         const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
         const projection = m4.perspective(fieldOfViewRadians, aspect, zNear, zFar);
 
         const up = [0, 1, 0];
         // Compute the camera's matrix using look at.
-        const camera = m4.lookAt(cameraPosition, cameraTarget, up);
+        cameraPosition[0] = cam_x_pos;
+        cameraPosition[1] = cam_y_pos;
+        cameraPosition[2] = cam_z_pos;
+        let camera = m4.lookAt(cameraPosition, cameraTarget, up);
+        //translate the M_c matrix, camera matrix, which inverse is the View Matrix
+
+        document.getElementById("camera-info-box").innerText = "Camera: (" + cam_x_pos + "," + cam_y_pos + "," + cam_z_pos + ") "
 
         // Make a view matrix from the camera matrix.
         const view = m4.inverse(camera);

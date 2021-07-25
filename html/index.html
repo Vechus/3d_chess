@@ -56,7 +56,27 @@
                 <!-- <img class="card-img-top" src="..." alt="Card image cap"> -->
                 <div class="card-body">
                     <h5 class="card-title" id="card-title">Side card</h5>
-                    <p class="card-text">Possiamo metterci un sacco di robba.</p>
+                    <p class="card-text">Possiamo metterci un sacco di roba.</p>
+
+                    <form class="controls">
+                        <label for="cxrot" class="form-label">Camera X Rotation</label>
+                        <input type="range" class="form-range" id="cxrot" value="0">
+
+                        <label for="cyrot" class="form-label">Camera Y Rotation</label>
+                        <input type="range" class="form-range" id="cyrot" value="0">
+                        <hr>
+                        <label for="cxpos" class="form-label">Camera X Pos</label>
+                        <input type="range" class="form-range" min="0" max="5" id="cxpos" value="0">
+
+                        <label for="cypos" class="form-label">Camera Y Pos</label>
+                        <input type="range" class="form-range" min="0" max="5" id="cypos" value="2">
+
+                        <label for="czpos" class="form-label">Camera Z Pos</label>
+                        <input type="range" class="form-range" min="0" max="5" id="czpos" value="4">
+
+                        <hr>
+                        <div id="camera-info-box"> Camera pos x y z rot</div>
+                    </form>
                 </div>
                 <div class="card-body">
                     <h4 class="card-title" id="card-subtitle">Theme</h4>
