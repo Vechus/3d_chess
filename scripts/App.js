@@ -1,5 +1,40 @@
+/*
+    3D MODELS AND OBJ UTILS
+ */
+async function loadAndInitMesh(resourceURI) {
+    let objString = await utils.get_objstr(resourceURI);
+    return new OBJ.Mesh(objString);
+}
+function initVAO(gl, program, mesh) {
+    let VAO = gl.createVertexArray();
+    gl.bindVertexArray(VAO);
 
-function main() {
+    var positionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(mesh.vertices), gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(program.POSITION_ATTRIBUTE);
+    gl.vertexAttribPointer(program.POSITION_ATTRIBUTE, 3, gl.FLOAT, false, 0, 0);
+
+    var normalBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(mesh.vertexNormal), gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(program.NORMAL_ATTRIBUTE);
+    gl.vertexAttribPointer(program.NORMAL_ATTRIBUTE, 3, gl.FLOAT, false, 0, 0);
+
+    var uvBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(mesh.textures), gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(program.UV_ATTRIBUTE);
+    gl.vertexAttribPointer(program.UV_ATTRIBUTE, 2, gl.FLOAT, false, 0, 0);
+
+    var indexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(mesh.indices), gl.STATIC_DRAW);
+
+    return VAO
+}
+
+async function main() {
     // Get A WebGL context
     const canvas = document.getElementById('game-canvas');
     const gl = canvas.getContext("webgl2");
@@ -45,47 +80,53 @@ function main() {
   }
   `;
 
+    let vertexShader = utils.createShader(gl, gl.VERTEX_SHADER, vs);
+    let fragmentShader = utils.createShader(gl, gl.FRAGMENT_SHADER, fs);
+
+    //info on how to render by binding the two shaders (DELETE THIS BEFORE THE EXAM) TODO
+    const glProgram = utils.createProgram(gl, vertexShader, fragmentShader);
+
     // compiles and links the shaders, looks up attribute and uniform locations
-   // const meshProgramInfo = twgl.createProgramInfo(gl, [vs, fs]);
+    // const meshProgramInfo = twgl.createProgramInfo(gl, [vs, fs]);
 
-   // const obj = await loader.load_obj('../assets/models/Queen.obj');
+    // const obj = await loader.load_obj('../assets/models/Queen.obj');
 
-   /* const parts = obj.geometries.map(({data}) => {
-        // Because data is just named arrays like this
-        //
-        // {
-        //   position: [...],
-        //   texcoord: [...],
-        //   normal: [...],
-        // }
-        //
-        // and because those names match the attributes in our vertex
-        // shader we can pass it directly into `createBufferInfoFromArrays`
-        // from the article "less code more fun".
+    /* const parts = obj.geometries.map(({data}) => {
+         // Because data is just named arrays like this
+         //
+         // {
+         //   position: [...],
+         //   texcoord: [...],
+         //   normal: [...],
+         // }
+         //
+         // and because those names match the attributes in our vertex
+         // shader we can pass it directly into `createBufferInfoFromArrays`
+         // from the article "less code more fun".
 
-        if (data.color) {
-            if (data.position.length === data.color.length) {
-                // it's 3. The our helper library assumes 4 so we need
-                // to tell it there are only 3.
-                data.color = { numComponents: 3, data: data.color };
-            }
-        } else {
-            // there are no vertex colors so just use constant white
-            data.color = { value: [1, 1, 1, 1] };
-        }
+         if (data.color) {
+             if (data.position.length === data.color.length) {
+                 // it's 3. The our helper library assumes 4 so we need
+                 // to tell it there are only 3.
+                 data.color = { numComponents: 3, data: data.color };
+             }
+         } else {
+             // there are no vertex colors so just use constant white
+             data.color = { value: [1, 1, 1, 1] };
+         }
 
-        // create a buffer for each array by calling
-        // gl.createBuffer, gl.bindBuffer, gl.bufferData
-        const bufferInfo = twgl.createBufferInfoFromArrays(gl, data);
-        const vao = twgl.createVAOFromBufferInfo(gl, meshProgramInfo, bufferInfo);
-        return {
-            material: {
-                u_diffuse: [1, 1, 1, 1],
-            },
-            bufferInfo,
-            vao,
-        };
-    }); */
+         // create a buffer for each array by calling
+         // gl.createBuffer, gl.bindBuffer, gl.bufferData
+         const bufferInfo = twgl.createBufferInfoFromArrays(gl, data);
+         const vao = twgl.createVAOFromBufferInfo(gl, meshProgramInfo, bufferInfo);
+         return {
+             material: {
+                 u_diffuse: [1, 1, 1, 1],
+             },
+             bufferInfo,
+             vao,
+         };
+     }); */
 
     const cameraTarget = [0, 0, 0];
     // figure out how far away to move the camera so we can likely
@@ -101,16 +142,27 @@ function main() {
     const zNear = radius / 100;
     const zFar = radius * 3;
 
+    //FETCH ASSETS
+
+    let queenMesh = await loadAndInitMesh('../assets/models/Queen.obj');
+    let queenVAO = initVAO(gl, glProgram, queenMesh);
 
     function render(time) {
         time *= 0.001;  // convert to seconds
 
         const INPUT_SCALE = 1;
         //** GET INPUT **//
-        let cam_x_pos = document.getElementById("cxpos").value/INPUT_SCALE;
-        let cam_y_pos = document.getElementById("cypos").value/INPUT_SCALE;
-        let cam_z_pos = document.getElementById("czpos").value/INPUT_SCALE;
+        let cam_x_pos = document.getElementById("cxpos").value / INPUT_SCALE;
+        let cam_y_pos = document.getElementById("cypos").value / INPUT_SCALE;
+        let cam_z_pos = document.getElementById("czpos").value / INPUT_SCALE;
 
+        //for each elements: render its triangles, with the amount of indexed triangles
+
+        /**
+         * FOR EACH VAO / 3D MODEL IN THE SCENE
+         */
+        gl.bindVertexArray(queenVAO);
+        gl.drawElements(gl.TRIANGLES, queenMesh.indices.length, gl.UNSIGNED_SHORT, 0);
 
         /*twgl.resizeCanvasToDisplaySize(gl.canvas);
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
@@ -143,6 +195,7 @@ function main() {
 
         requestAnimationFrame(render);
     }
+
     requestAnimationFrame(render);
 }
 
