@@ -54,25 +54,6 @@ async function main() {
         glProgram = utils.createProgram(gl, vertexShader, fragmentShader);
     });
 
-    //INIT CAMERA STUFF * ==========================================================================================================================================
-    //* ==========================================================================================================================================
-    let aspect = gl.canvas.width / gl.canvas.height;
-    let projectionMatrix = utils.MakePerspective(60.0, aspect, 1.0, 2000.0);
-
-    let cameraPosition = [0.0, 0, 0.0];
-    let target = [2.0, 0.5, 0.0];
-    let up = [0.0, 0.0, 1.0];
-
-    let cameraMatrix = utils.LookAt(cameraPosition, target, up);
-    let viewMatrix = utils.invertMatrix(cameraMatrix);
-
-    let viewProjectionMatrix = utils.multiplyMatrices(projectionMatrix, viewMatrix);
-
-    //* ==========================================================================================================================================
-    //* ==========================================================================================================================================
-
-
-
     //FETCH ASSETS
     //* ==========================================================================================================================================
 
@@ -103,14 +84,31 @@ async function main() {
     function render(time) {
         time *= 0.001;  // convert to seconds
 
+        //INIT CAMERA STUFF * ==========================================================================================================================================
+        //* ==========================================================================================================================================
+
+        gl.clearColor(0.86, 0.86, 0.86, 1);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        let aspect = gl.canvas.width / gl.canvas.height;
+        let projectionMatrix = utils.MakePerspective(60.0, aspect, 1.0, 2000.0);
+
+        let cameraPosition = [30.0, -2.0, 0.0];
+        let target = [2.0, 0.5, 0.0];
+        let up = [0.0, 0.0, 1.0];
+
+        let cameraMatrix = utils.LookAt(cameraPosition, target, up);
+        let viewMatrix = utils.invertMatrix(cameraMatrix);
+
+        let viewProjectionMatrix = utils.multiplyMatrices(projectionMatrix, viewMatrix);
+
+        //* ==========================================================================================================================================
+        //* ==========================================================================================================================================
+
         const INPUT_SCALE = 1;
         //** GET INPUT **//
         let cam_x_pos = document.getElementById("cxpos").value / INPUT_SCALE;
         let cam_y_pos = document.getElementById("cypos").value / INPUT_SCALE;
         let cam_z_pos = document.getElementById("czpos").value / INPUT_SCALE;
-
-        //for each elements: render its triangles, with the amount of indexed triangles
-
 
         /**
          * FOR EACH VAO / 3D MODEL IN THE SCENE
@@ -125,7 +123,7 @@ async function main() {
             let directionalLight = [Math.cos(dirLightAlpha) * Math.cos(dirLightBeta),
                 Math.sin(dirLightAlpha), Math.cos(dirLightAlpha) * Math.sin(dirLightBeta)];
 
-            let directionalLightColor = [0.8, 1.0, 1.0];
+            let directionalLightColor = [0.8, 0.2, 0.1];
             //==========================================================================================================================
             // compute the world matrix for (in this case) the queen
             let u_world = utils.identityMatrix();
@@ -149,7 +147,6 @@ async function main() {
             gl.drawElements(gl.TRIANGLES, queenMesh.indices.length, gl.UNSIGNED_SHORT, 0);
 
         }
-
 
         requestAnimationFrame(render);
     }
