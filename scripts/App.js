@@ -5,6 +5,7 @@ async function loadAndInitMesh(resourceURI) {
     let objString = await utils.get_objstr(resourceURI);
     return new OBJ.Mesh(objString);
 }
+
 function initVAO(gl, program, mesh) {
     let VAO = gl.createVertexArray();
     gl.bindVertexArray(VAO);
@@ -128,25 +129,54 @@ async function main() {
          };
      }); */
 
-    const cameraTarget = [0, 0, 0];
-    // figure out how far away to move the camera so we can likely
+    //INIT CAMERA STUFF * ==========================================================================================================================================
+    //* ==========================================================================================================================================
+    let cameraPosition = [0.0, 0, 0.0];
+    let target = [2.0, 0.5, 0.0];
+    let up = [0.0, 0.0, 1.0];
+    let cameraMatrix = utils.LookAt(cameraPosition, target, up); //TODO MANCA NELLE UTILS, COME MAI???
+    let viewMatrix = utils.invertMatrix(cameraMatrix);
+
+    var viewProjectionMatrix = utils.multiplyMatrices(projectionMatrix, viewMatrix);
 
     const radius = 3
-    let cameraPosition = m4.addVectors(cameraTarget, [
-        0,
-        2,
-        radius,
-    ]);
+
     // Set zNear and zFar to something hopefully appropriate
     // for the size of this object.
     const zNear = radius / 100;
     const zFar = radius * 3;
 
+    //* ==========================================================================================================================================
+    //* ==========================================================================================================================================
+
+
+
     //FETCH ASSETS
+    //* ==========================================================================================================================================
 
     let queenMesh = await loadAndInitMesh('../assets/models/Queen.obj');
     let queenVAO = initVAO(gl, glProgram, queenMesh);
 
+    //==========================================================================================================================================
+    //==========================================================================================================================================
+
+    //GL STUFF
+    //* ==========================================================================================================================================
+
+    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+    gl.clearColor(0.86, 0.86, 0.86, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.enable(gl.DEPTH_TEST);
+
+    var positionAttributeLocation = gl.getAttribLocation(program, "inPosition");
+    var normalAttributeLocation = gl.getAttribLocation(program, "inNormal");
+    var matrixLocation = gl.getUniformLocation(program, "matrix");
+    var materialDiffColorHandle = gl.getUniformLocation(program, 'mDiffColor');
+    var lightDirectionHandle = gl.getUniformLocation(program, 'lightDirection');
+    var lightColorHandle = gl.getUniformLocation(program, 'lightColor');
+    var normalMatrixPositionHandle = gl.getUniformLocation(program, 'nMatrix');
+    //==========================================================================================================================================
+    //* ==========================================================================================================================================
     function render(time) {
         time *= 0.001;  // convert to seconds
 
@@ -158,39 +188,47 @@ async function main() {
 
         //for each elements: render its triangles, with the amount of indexed triangles
 
+
         /**
          * FOR EACH VAO / 3D MODEL IN THE SCENE
+         * ==========================================================================================================================================
          */
-        gl.bindVertexArray(queenVAO);
-        gl.drawElements(gl.TRIANGLES, queenMesh.indices.length, gl.UNSIGNED_SHORT, 0);
 
-        /*twgl.resizeCanvasToDisplaySize(gl.canvas);
-        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-        gl.enable(gl.DEPTH_TEST);
+        for (let i = 0; i < 1; i++) {
 
-        const fieldOfViewRadians = degToRad(70);
-        const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-        const projection = m4.perspective(fieldOfViewRadians, aspect, zNear, zFar);
+            // compute the world matrix
+            let u_world = utils.identityMatrix();
+            u_world = utils.multiplyMatrices(u_world, utils.MakeTranslateMatrix(2, 0.5, 0)); //from origin to (2 , 0.5 , 0)
 
-        const up = [0, 1, 0];
-        // Compute the camera's matrix using look at.
-        cameraPosition[0] = cam_x_pos;
-        cameraPosition[1] = cam_y_pos;
-        cameraPosition[2] = cam_z_pos;
-        let camera = m4.lookAt(cameraPosition, cameraTarget, up);
-        //translate the M_c matrix, camera matrix, which inverse is the View Matrix
+            gl.useProgram(glProgram); //TODO pick at every iteration the program info of the rendered object
+            //i mean: gl.useProgram(object.drawInfo.programInfo);
 
-        document.getElementById("camera-info-box").innerText = "Camera: (" + cam_x_pos + "," + cam_y_pos + "," + cam_z_pos + ") "
+            let projectionMatrix = utils.multiplyMatrices(viewProjectionMatrix, u_world);
+            let normalMatrix = utils.invertMatrix(utils.transposeMatrix(u_world));
 
-        // Make a view matrix from the camera matrix.
-        const view = m4.inverse(camera);
+            gl.uniformMatrix4fv(matrixLocation, gl.FALSE, utils.transposeMatrix(projectionMatrix));
+            gl.uniformMatrix4fv(normalMatrixPositionHandle, gl.FALSE, utils.transposeMatrix(normalMatrix));
 
-        const sharedUniforms = {
-            u_lightDirection: m4.normalize([-1, 3, 5]),
-            u_view: view,
-            u_projection: projection,
-        };
- */
+            //TODO da sostituire
+            gl.uniform3fv(materialDiffColorHandle, object.drawInfo.materialColor);
+            gl.uniform3fv(lightColorHandle, directionalLightColor);
+            gl.uniform3fv(lightDirectionHandle, directionalLight);
+
+            gl.bindVertexArray(object.drawInfo.vertexArray);
+            gl.drawElements(gl.TRIANGLES, object.drawInfo.bufferLength, gl.UNSIGNED_SHORT, 0);
+
+
+
+            gl.bindVertexArray(queenVAO);
+            gl.drawElements(gl.TRIANGLES, queenMesh.indices.length, gl.UNSIGNED_SHORT, 0);
+
+        }
+
+        /*
+        * ==========================================================================================================================================
+        * * ==========================================================================================================================================
+        * * ==========================================================================================================================================
+         */
 
 
         requestAnimationFrame(render);
