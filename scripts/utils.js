@@ -56,7 +56,7 @@ createProgram:function(gl, vertexShader, fragmentShader) {
     const expandFullScreen = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      //console.log(canvas.width+" "+window.innerWidth);
+      console.log(canvas.width+" "+window.innerWidth);
         
     };
     expandFullScreen();
@@ -627,6 +627,85 @@ createProgram:function(gl, vertexShader, fragmentShader) {
 
 		return out;
 	},
+    
+    LookAt: function(cameraPosition, target, up, dst) {
+    dst = dst || new Float32Array(16);
+    var zAxis = this.normalize(
+        this.subtractVectors(cameraPosition, target));
+    var xAxis = this.normalize(this.cross(up, zAxis));
+    var yAxis = this.normalize(this.cross(zAxis, xAxis));
+
+    dst[ 0] = xAxis[0];
+    dst[ 1] = yAxis[0];
+    dst[ 2] = zAxis[0];
+    dst[ 3] = cameraPosition[0];
+    dst[ 4] = xAxis[1];
+    dst[ 5] = yAxis[1];
+    dst[ 6] = zAxis[1];
+    dst[ 7] = cameraPosition[1];
+    dst[ 8] = xAxis[2];
+    dst[ 9] = yAxis[2];
+    dst[10] = zAxis[2];
+    dst[11] = cameraPosition[2];
+    dst[12] = 0.0;
+    dst[13] = 0.0;
+    dst[14] = 0.0;
+    dst[15] = 1.0;
+
+    return dst;
+  },
+    
+    normalize: function(v, dst) {
+    dst = dst || new Float32Array(3);
+    var length = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+    // make sure we don't divide by 0.
+    if (length > 0.00001) {
+      dst[0] = v[0] / length;
+      dst[1] = v[1] / length;
+      dst[2] = v[2] / length;
+    }
+    return dst;
+  },
+    
+    cross:function(a, b, dst) {
+    dst = dst || new Float32Array(3);
+    dst[0] = a[1] * b[2] - a[2] * b[1];
+    dst[1] = a[2] * b[0] - a[0] * b[2];
+    dst[2] = a[0] * b[1] - a[1] * b[0];
+    return dst;
+  },
+    
+    subtractVectors:function(a, b, dst) {
+    dst = dst || new Float32Array(3);
+    dst[0] = a[0] - b[0];
+    dst[1] = a[1] - b[1];
+    dst[2] = a[2] - b[2];
+    return dst;
+  },
+    
+      copy:function(src, dst) {
+    dst = dst || new Float32Array(16);
+
+    dst[ 0] = src[ 0];
+    dst[ 1] = src[ 1];
+    dst[ 2] = src[ 2];
+    dst[ 3] = src[ 3];
+    dst[ 4] = src[ 4];
+    dst[ 5] = src[ 5];
+    dst[ 6] = src[ 6];
+    dst[ 7] = src[ 7];
+    dst[ 8] = src[ 8];
+    dst[ 9] = src[ 9];
+    dst[10] = src[10];
+    dst[11] = src[11];
+    dst[12] = src[12];
+    dst[13] = src[13];
+    dst[14] = src[14];
+    dst[15] = src[15];
+
+    return dst;
+  },
+
 
 	MakePerspective:function(fovy, a, n, f) {
 	// Creates the perspective projection matrix. The matrix is returned.
