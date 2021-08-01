@@ -13,23 +13,27 @@ function initVAO(gl, program, mesh) {
     let VAO = gl.createVertexArray();
     gl.bindVertexArray(VAO);
 
+    let positionAttributeLocation = gl.getAttribLocation(program, "inPosition");
+    let normalAttributeLocation = gl.getAttribLocation(program, "inNormal");
+
     var positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(mesh.vertices), gl.STATIC_DRAW);
-    gl.enableVertexAttribArray(program.POSITION_ATTRIBUTE);
-    gl.vertexAttribPointer(program.POSITION_ATTRIBUTE, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(positionAttributeLocation);
+    gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
 
     var normalBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(mesh.vertexNormal), gl.STATIC_DRAW);
-    gl.enableVertexAttribArray(program.NORMAL_ATTRIBUTE);
-    gl.vertexAttribPointer(program.NORMAL_ATTRIBUTE, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(normalAttributeLocation);
+    gl.vertexAttribPointer(normalAttributeLocation, 3, gl.FLOAT, false, 0, 0);
 
+    /* TODO UVs
     var uvBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(mesh.textures), gl.STATIC_DRAW);
     gl.enableVertexAttribArray(program.UV_ATTRIBUTE);
-    gl.vertexAttribPointer(program.UV_ATTRIBUTE, 2, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(program.UV_ATTRIBUTE, 2, gl.FLOAT, false, 0, 0); */
 
     var indexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
@@ -57,7 +61,7 @@ async function main() {
     //FETCH ASSETS
     //* ==========================================================================================================================================
 
-    let queenMesh = await loadAndInitMesh('../assets/models/Queen.obj');
+    let queenMesh = await loadAndInitMesh('../assets/models/Pawn.obj');
     let queenVAO = initVAO(gl, glProgram, queenMesh);
 
     //==========================================================================================================================================
@@ -87,13 +91,13 @@ async function main() {
         //INIT CAMERA STUFF * ==========================================================================================================================================
         //* ==========================================================================================================================================
 
-        gl.clearColor(0.86, 0.86, 0.86, 1);
+        gl.clearColor(0.0, 0.86, 0.0, 1); //clear the buffers with this color a.k.a. green screen
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         let aspect = gl.canvas.width / gl.canvas.height;
-        let projectionMatrix = utils.MakePerspective(60.0, aspect, 1.0, 2000.0);
+        let projectionMatrix = utils.MakePerspective(60.0, aspect, 0.01, 20000.0);
 
-        let cameraPosition = [30.0, -2.0, 0.0];
-        let target = [2.0, 0.5, 0.0];
+        let cameraPosition = [5.0, -1.0, 0.0];
+        let target = [0.0, 0.0, 0.0];
         let up = [0.0, 0.0, 1.0];
 
         let cameraMatrix = utils.LookAt(cameraPosition, target, up);
@@ -105,10 +109,10 @@ async function main() {
         //* ==========================================================================================================================================
 
         const INPUT_SCALE = 1;
-        //** GET INPUT **//
+        /* GET INPUT
         let cam_x_pos = document.getElementById("cxpos").value / INPUT_SCALE;
         let cam_y_pos = document.getElementById("cypos").value / INPUT_SCALE;
-        let cam_z_pos = document.getElementById("czpos").value / INPUT_SCALE;
+        let cam_z_pos = document.getElementById("czpos").value / INPUT_SCALE; */
 
         /**
          * FOR EACH VAO / 3D MODEL IN THE SCENE
@@ -123,11 +127,11 @@ async function main() {
             let directionalLight = [Math.cos(dirLightAlpha) * Math.cos(dirLightBeta),
                 Math.sin(dirLightAlpha), Math.cos(dirLightAlpha) * Math.sin(dirLightBeta)];
 
-            let directionalLightColor = [0.8, 0.2, 0.1];
+            let directionalLightColor = [1, 1, 1];
             //==========================================================================================================================
             // compute the world matrix for (in this case) the queen
             let u_world = utils.identityMatrix();
-            u_world = utils.multiplyMatrices(u_world, utils.MakeTranslateMatrix(2, 0.5, 0)); //from origin to (2 , 0.5 , 0)
+            u_world = utils.multiplyMatrices(u_world, utils.MakeTranslateMatrix(0, 0, 0)); //from origin to
 
             gl.useProgram(glProgram); //TODO pick at every iteration the program info of the rendered object
             //I mean: gl.useProgram(object.drawInfo.programInfo);
@@ -138,7 +142,7 @@ async function main() {
             gl.uniformMatrix4fv(matrixLocation, gl.FALSE, utils.transposeMatrix(projectionMatrix));
             gl.uniformMatrix4fv(normalMatrixPositionHandle, gl.FALSE, utils.transposeMatrix(normalMatrix));
 
-            let materialColor = [1, 0.6, 1]
+            let materialColor = [1, 0.5, 0.8]
             gl.uniform3fv(materialDiffColorHandle, materialColor);
             gl.uniform3fv(lightColorHandle, directionalLightColor);
             gl.uniform3fv(lightDirectionHandle, directionalLight);
