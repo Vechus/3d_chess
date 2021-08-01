@@ -62,14 +62,37 @@ async function main() {
     //FETCH ASSETS TODO encapsulate this into a constructor??
     //* ==========================================================================================================================================
 
+    let tempArray = []
+    let pawnGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Pawn.obj'));
+    tempArray.push(pawnGameObject);
 
-    let queenGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Pawn.obj'));
+    let bishopGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Bishop.obj'));
+    tempArray.push(bishopGameObject);
+
+    let kingGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/King.obj'));
+    tempArray.push(kingGameObject);
+
+    let knightGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Knight.obj'));
+    tempArray.push(knightGameObject);
+
+    let queenGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Queen.obj'));
+    tempArray.push(queenGameObject);
+
+    let rookGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Rook.obj'));
+    tempArray.push(rookGameObject);
+
+    tempArray.forEach((element, index) => {
+        element.setPosition(index, 2, index-1); //random positioning, just to see them
+    })
+
     let boardGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Board.obj'));
 
-    boardGameObject.setPosition(0,-3,0)
+
+    boardGameObject.setPosition(0,0,0)
+
 
     let Scene = []
-    Scene.push(queenGameObject, boardGameObject)
+    Scene.push(pawnGameObject, boardGameObject, bishopGameObject, kingGameObject, knightGameObject, queenGameObject, rookGameObject)
 
 
 
