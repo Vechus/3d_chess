@@ -65,6 +65,9 @@ async function main() {
     let queenMesh = await loadAndInitMesh('../assets/models/Pawn.obj');
     let queenVAO = initVAO(gl, glProgram, queenMesh);
 
+    let queenGameObject = new GameObject(queenVAO)
+    queenGameObject.setProgramInfo(glProgram)
+
     //==========================================================================================================================================
     //==========================================================================================================================================
 
@@ -76,14 +79,7 @@ async function main() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.enable(gl.DEPTH_TEST);
 
-    let fsDiffuseColor4 = gl.getUniformLocation(glProgram, 'u_diffuse');
-    let fsLightDirection3 = gl.getUniformLocation(glProgram, 'u_lightDirection');
 
-
-    //Uniforms of Vertex Shader
-    let vsView = gl.getUniformLocation(glProgram, "u_view");
-    let vsProjection = gl.getUniformLocation(glProgram, 'u_projection');
-    let vsWorld = gl.getUniformLocation(glProgram, 'u_world');
     //==========================================================================================================================================
     //* ==========================================================================================================================================
 
@@ -115,9 +111,6 @@ async function main() {
         let projectionMatrix = utils.MakePerspective(60.0, aspect, 0.01, 20000.0);
 
 
-
-        let viewProjectionMatrix = utils.multiplyMatrices(projectionMatrix, viewMatrix);
-
         //* ==========================================================================================================================================
         //* ==========================================================================================================================================
 
@@ -132,27 +125,10 @@ async function main() {
             //LIGHT=====================================================================================================================
             let u_lightDirection = m4.normalize([-1, 3, 5]);
 
-            //==========================================================================================================================
-            // compute the world matrix for (in this case) the queen
-            let u_world = utils.identityMatrix();
-            u_world = utils.multiplyMatrices(u_world, utils.MakeTranslateMatrix(0, 0, 0)); //from origin to
-
-            gl.useProgram(glProgram); //TODO pick at every iteration the program info of the rendered object
+            gl.useProgram(queenGameObject.glProgramInfo); //TODO pick at every iteration the program info of the rendered object
             //I mean: gl.useProgram(object.drawInfo.programInfo);
-
-
-            gl.uniformMatrix4fv(vsProjection, false, utils.transposeMatrix(projectionMatrix));
-            gl.uniformMatrix4fv(vsView, false, utils.transposeMatrix(viewMatrix));
-
-            gl.uniformMatrix4fv(vsWorld, false, utils.transposeMatrix(u_world));
-
             gl.bindVertexArray(queenVAO);
-
-            let materialColor = [1, 0.5, 0.8, 1.0]
-
-            gl.uniform4fv(fsDiffuseColor4, materialColor);
-            gl.uniform3fv(fsLightDirection3, u_lightDirection);
-
+            queenGameObject.render(gl, projectionMatrix, viewMatrix, u_lightDirection);
 
             gl.drawElements(gl.TRIANGLES, queenMesh.indices.length, gl.UNSIGNED_SHORT, 0);
 
