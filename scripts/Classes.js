@@ -1,9 +1,16 @@
 class GameObject {
-    constructor(VAO) {
-        this.position = [0,0,0]
+    constructor(gl, glProgram, mesh) {
+        this.mesh = mesh
+        this.VAO = initVAO(gl, glProgram, this.mesh);
+        this.glProgramInfo = (glProgram)
+
+        this.position = [0, 0, 0]
         this.color = [1.0, 1.0, 1.0, 1.0]
-        this.VAO = VAO;
         this.scale = 1.0;
+
+        this.mesh = mesh
+
+        this.children = [] //nesting and scene graph
     }
 
     setProgramInfo(glProgramInfo) {
@@ -42,6 +49,8 @@ class GameObject {
 
         gl.uniform4fv(fsDiffuseColor4, materialColor);
         gl.uniform3fv(fsLightDirection3, lightDirection);
+
+        gl.drawElements(gl.TRIANGLES, this.mesh.indices.length, gl.UNSIGNED_SHORT, 0);
     }
 }
 

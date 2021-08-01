@@ -59,14 +59,19 @@ async function main() {
         glProgram = utils.createProgram(gl, vertexShader, fragmentShader);
     });
 
-    //FETCH ASSETS
+    //FETCH ASSETS TODO encapsulate this into a constructor??
     //* ==========================================================================================================================================
 
-    let queenMesh = await loadAndInitMesh('../assets/models/Pawn.obj');
-    let queenVAO = initVAO(gl, glProgram, queenMesh);
 
-    let queenGameObject = new GameObject(queenVAO)
-    queenGameObject.setProgramInfo(glProgram)
+    let queenGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Pawn.obj'));
+    let boardGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Board.obj'));
+
+    boardGameObject.setPosition(0,-3,0)
+
+    let Scene = []
+    Scene.push(queenGameObject, boardGameObject)
+
+
 
     //==========================================================================================================================================
     //==========================================================================================================================================
@@ -120,19 +125,18 @@ async function main() {
          * ==========================================================================================================================================
          */
 
-        for (let i = 0; i < 1; i++) {
+        let u_lightDirection = m4.normalize([-1, 3, 5]); //temp TODO array of light sources (ambient, directionals, spots, emitters ...)
 
+        Scene.forEach((sceneObject) => {
             //LIGHT=====================================================================================================================
-            let u_lightDirection = m4.normalize([-1, 3, 5]);
 
-            gl.useProgram(queenGameObject.glProgramInfo); //TODO pick at every iteration the program info of the rendered object
-            //I mean: gl.useProgram(object.drawInfo.programInfo);
-            gl.bindVertexArray(queenVAO);
-            queenGameObject.render(gl, projectionMatrix, viewMatrix, u_lightDirection);
+            gl.useProgram(sceneObject.glProgramInfo); //TODO pick at every iteration the program info of the rendered object
 
-            gl.drawElements(gl.TRIANGLES, queenMesh.indices.length, gl.UNSIGNED_SHORT, 0);
+            gl.bindVertexArray(sceneObject.VAO);
+            sceneObject.render(gl, projectionMatrix, viewMatrix, u_lightDirection);
 
-        }
+
+        } )
 
         requestAnimationFrame(render);
     }
