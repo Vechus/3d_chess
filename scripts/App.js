@@ -82,17 +82,18 @@ async function main() {
     tempArray.push(rookGameObject);
 
     tempArray.forEach((element, index) => {
-        element.setPosition(index, 2, index-1); //random positioning, just to see them
+        element.setPosition(index-1, 2, index); //random positioning, just to see them
     })
 
     let boardGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Board.obj'));
 
 
-    boardGameObject.setPosition(0,0,0)
+    boardGameObject.setPosition(0,0,0);
+    boardGameObject.setYaw(45);
 
 
-    let Scene = []
-    Scene.push(pawnGameObject, boardGameObject, bishopGameObject, kingGameObject, knightGameObject, queenGameObject, rookGameObject)
+    let Scene = [];
+    Scene.push(pawnGameObject, boardGameObject, bishopGameObject, kingGameObject, knightGameObject, queenGameObject, rookGameObject);
 
 
 

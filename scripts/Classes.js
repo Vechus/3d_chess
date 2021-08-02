@@ -5,6 +5,9 @@ class GameObject {
         this.glProgramInfo = (glProgram)
 
         this.position = [0, 0, 0]
+        this.yaw = 0;
+        this.pitch = 0;
+        this.roll = 0;
         this.color = [1.0, 1.0, 1.0, 1.0]
         this.scale = 1.0;
 
@@ -21,8 +24,41 @@ class GameObject {
         this.position = [x,y,z]
     }
 
+    setPitch(p) {
+        this.pitch = p;
+    }
+
+    setYaw(y) {
+        this.yaw = y;
+    }
+
+    setRoll(r) {
+        this.roll = r;
+    }
+
     setDiffuseColor(red, green, blue, alpha) {
         this.color = [red, green, blue, alpha]
+    }
+
+    #computeWorldMatrix() {
+        let scaleMatrix = utils.MakeScaleMatrix(this.scale);
+        let rotateXMatrix = utils.MakeRotateXMatrix(this.pitch);
+        let rotateYMatrix = utils.MakeRotateYMatrix(this.yaw);
+        let rotateZMatrix = utils.MakeRotateZMatrix(this.roll);
+        let translateMatrix = utils.MakeTranslateMatrix(this.position[0], this.position[1], this.position[2]);
+        return utils.multiplyMatrices(
+            translateMatrix,
+            utils.multiplyMatrices(
+                rotateYMatrix,
+                utils.multiplyMatrices(
+                    rotateXMatrix,
+                    utils.multiplyMatrices(
+                        rotateZMatrix,
+                        scaleMatrix
+                    )
+                )
+            )
+        );
     }
 
     render(gl, projectionMatrix, viewMatrix, lightDirection) {
@@ -37,8 +73,7 @@ class GameObject {
 
         //==========================================================================================================================
         // compute the world matrix for (in this case) the queen
-        let u_world = utils.identityMatrix();
-        u_world = utils.multiplyMatrices(u_world, utils.MakeTranslateMatrix(this.position[0], this.position[1], this.position[2])); //from origin to
+        let u_world = this.#computeWorldMatrix();
 
         gl.uniformMatrix4fv(vsProjection, false, utils.transposeMatrix(projectionMatrix));
         gl.uniformMatrix4fv(vsView, false, utils.transposeMatrix(viewMatrix));
