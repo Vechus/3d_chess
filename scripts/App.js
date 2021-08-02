@@ -63,22 +63,22 @@ async function main() {
     //* ==========================================================================================================================================
 
     let tempArray = []
-    let pawnGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Pawn.obj'));
+    let pawnGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Pawn_low.obj'));
     tempArray.push(pawnGameObject);
 
-    let bishopGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Bishop.obj'));
+    let bishopGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Bishop_low.obj'));
     tempArray.push(bishopGameObject);
 
-    let kingGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/King.obj'));
+    let kingGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/King_low.obj'));
     tempArray.push(kingGameObject);
 
-    let knightGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Knight.obj'));
+    let knightGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Knight_low.obj'));
     tempArray.push(knightGameObject);
 
-    let queenGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Queen.obj'));
+    let queenGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Queen_low.obj'));
     tempArray.push(queenGameObject);
 
-    let rookGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Rook.obj'));
+    let rookGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Rook_low.obj'));
     tempArray.push(rookGameObject);
 
     tempArray.forEach((element, index) => {
