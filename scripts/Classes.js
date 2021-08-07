@@ -1,19 +1,44 @@
+const coorColumnsMap = new Map([
+    ['a', -5.2],
+    ['b', -3.7],
+    ['c', -2.2],
+    ['d', -0.7],
+    ['e', 0.7],
+    ['f', 2.2],
+    ['g', 3.7],
+    ['h', 5.2]
+]);
+
+const coorRowsMap = new Map([
+    [1, 5.2],
+    [2, 3.7],
+    [3, 2.2],
+    [4, 0.7],
+    [5, -0.7],
+    [6, -2.2],
+    [7, -3.7],
+    [8, -5.2]
+]);
+
+const zPos = 0.7;
+
 class GameObject {
     constructor(gl, glProgram, mesh) {
-        this.mesh = mesh
+        this.mesh = mesh;
         this.VAO = initVAO(gl, glProgram, this.mesh);
-        this.glProgramInfo = (glProgram)
+        this.glProgramInfo = (glProgram);
 
-        this.position = [0, 0, 0]
+        this.position = [0, 0, 0];
         this.yaw = 0;
         this.pitch = 0;
         this.roll = 0;
         this.color = [1.0, 1.0, 1.0, 1.0]
         this.scale = 1.0;
 
-        this.mesh = mesh
+        this.mesh = mesh;
 
-        this.children = [] //nesting and scene graph
+        this.children = []; //nesting and scene graph
+
     }
 
     setProgramInfo(glProgramInfo) {
@@ -21,7 +46,7 @@ class GameObject {
     }
 
     setPosition(x,y,z) {
-        this.position = [x,y,z]
+        this.position = [x,y,z];
     }
 
     setPitch(p) {
@@ -37,8 +62,19 @@ class GameObject {
     }
 
     setDiffuseColor(red, green, blue, alpha) {
-        this.color = [red, green, blue, alpha]
+        this.color = [red, green, blue, alpha];
     }
+ 
+
+    /*
+    placeOnSquare(square) {
+        let tempArray1 = square.split("");
+        let col = tempArray1[0];
+        let row = tempArray1[1];
+            this.setPosition(coorColumnsMap.get(col), zPos, coorRowsMap.get(row));    
+    }
+    */
+  
 
     #computeWorldMatrix() {
         let scaleMatrix = utils.MakeScaleMatrix(this.scale);

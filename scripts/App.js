@@ -92,6 +92,9 @@ async function main() {
     boardGameObject.setYaw(45);
 
 
+    //queenGameObject.placeOnSquare('A6');
+    //kingGameObject.placeOnSquare('F7');
+    
     let Scene = [];
     Scene.push(pawnGameObject, boardGameObject, bishopGameObject, kingGameObject, knightGameObject, queenGameObject, rookGameObject);
 
