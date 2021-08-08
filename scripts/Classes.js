@@ -1,23 +1,23 @@
 const coorColumnsMap = new Map([
-    ['a', -5.2],
-    ['b', -3.7],
-    ['c', -2.2],
-    ['d', -0.7],
-    ['e', 0.7],
-    ['f', 2.2],
-    ['g', 3.7],
-    ['h', 5.2]
+    ['A', -5.2],
+    ['B', -3.7],
+    ['C', -2.2],
+    ['D', -0.7],
+    ['E', 0.7],
+    ['F', 2.2],
+    ['G', 3.7],
+    ['H', 5.2]
 ]);
 
 const coorRowsMap = new Map([
-    [1, 5.2],
-    [2, 3.7],
-    [3, 2.2],
-    [4, 0.7],
-    [5, -0.7],
-    [6, -2.2],
-    [7, -3.7],
-    [8, -5.2]
+    ['1', 5.2],
+    ['2', 3.7],
+    ['3', 2.2],
+    ['4', 0.7],
+    ['5', -0.7],
+    ['6', -2.2],
+    ['7', -3.7],
+    ['8', -5.2]
 ]);
 
 const zPos = 0.7;
@@ -66,14 +66,14 @@ class GameObject {
     }
  
 
-    /*
+    
     placeOnSquare(square) {
         let tempArray1 = square.split("");
         let col = tempArray1[0];
         let row = tempArray1[1];
-            this.setPosition(coorColumnsMap.get(col), zPos, coorRowsMap.get(row));    
+        this.setPosition(coorColumnsMap.get(col), zPos, coorRowsMap.get(row));   
     }
-    */
+    
   
 
     #computeWorldMatrix() {

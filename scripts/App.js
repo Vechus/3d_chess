@@ -62,41 +62,88 @@ async function main() {
     //FETCH ASSETS TODO encapsulate this into a constructor??
     //* ==========================================================================================================================================
 
-    let tempArray = []
-    let pawnGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Pawn_low.obj'));
-    tempArray.push(pawnGameObject);
+    let pawnArray = [];
+    let bishopArray = [];
+    let knightArray = [];
+    let rookArray = [];
+    let kingArray = [];
+    let queenArray = [];
 
-    let bishopGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Bishop_low.obj'));
-    tempArray.push(bishopGameObject);
+    queenArray = createPiece(gl, glProgram, await loadAndInitMesh('../assets/models/Queen_low.obj'), 2);
+    kingArray = createPiece(gl, glProgram, await loadAndInitMesh('../assets/models/King_low.obj'), 2);
+    bishopArray = createPiece(gl, glProgram, await loadAndInitMesh('../assets/models/Bishop_low.obj'), 4);
+    knightArray = createPiece(gl, glProgram, await loadAndInitMesh('../assets/models/Knight_low.obj'), 4);
+    rookArray = createPiece(gl, glProgram, await loadAndInitMesh('../assets/models/Rook_low.obj'), 4); 
+    pawnArray = createPiece(gl, glProgram, await loadAndInitMesh('../assets/models/Pawn_low.obj'), 16);
 
-    let kingGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/King_low.obj'));
+    
+
+    pawnArray[1].placeOnSquare('A1');
+    pawnArray[12].placeOnSquare('F1');
+
+    /*
+    //create pawns
+    for(let i = 0; i < 16; i++) {
+        let pawnGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Pawn_low.obj'));
+        pawnArray.push(pawnGameObject);
+    }
+
+    //black pawns
+    for(let i = 0; i < 8; i++) {
+        pawnArray[i].setDiffuseColor(0.20, 0.18, 0.18, 0);
+    }
+    
+    
+    //create bishops, rooks, knights
+    for( let i = 0; i < 4; i++) {
+        let bishopGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Bishop_low.obj'));
+        bishopArray.push(bishopGameObject);
+
+        let rookGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Rook_low.obj'));
+        rookArray.push(rookGameObject);
+
+        let knightGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Knight_low.obj'));
+        knightArray.push(knightGameObject);
+    }
+
+    //black bishops, rooks, kights
+    for (let i = 0; i < 2; i++) {
+        bishopArray[i].setDiffuseColor(0.20, 0.18, 0.18, 0);
+        rookArray[i].setDiffuseColor(0.20, 0.18, 0.18, 0);
+        knightArray[i].setDiffuseColor(0.20, 0.18, 0.18, 0);
+    }
+
+
+    //create kings and queens
+    for( let i = 0; i < 2; i++) {
+        let kingGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/King_low.obj'));
+        
+    }
     tempArray.push(kingGameObject);
 
-    let knightGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Knight_low.obj'));
     tempArray.push(knightGameObject);
 
     let queenGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Queen_low.obj'));
     tempArray.push(queenGameObject);
 
-    let rookGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Rook_low.obj'));
     tempArray.push(rookGameObject);
 
     tempArray.forEach((element, index) => {
         element.setPosition(index-1, 2, index); //random positioning, just to see them
-    })
+    })*/
 
     let boardGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Board.obj'));
 
 
     boardGameObject.setPosition(0,0,0);
     boardGameObject.setYaw(45);
-
-
-    //queenGameObject.placeOnSquare('A6');
-    //kingGameObject.placeOnSquare('F7');
     
     let Scene = [];
-    Scene.push(pawnGameObject, boardGameObject, bishopGameObject, kingGameObject, knightGameObject, queenGameObject, rookGameObject);
+    Scene = queenArray.concat(kingArray, bishopArray, knightArray, rookArray, pawnArray);
+
+    Scene.push(boardGameObject);
+    //tempArray.forEach(element => Scene.push(element));
+    //Scene.push(boardGameObject, bishopGameObject, kingGameObject, knightGameObject, queenGameObject, rookGameObject);
 
 
 
