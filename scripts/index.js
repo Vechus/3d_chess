@@ -17,7 +17,7 @@ for (const [key, value] of Object.entries(game.board.configuration.pieces)) {
 await play()
 
 async function play () {
-    await sleep(2000);
+    await sleep(200);
     const status = game.exportJson();
     if (status.isFinished) {
         console.log(`${status.turn} is in ${status.checkMate ? 'checkmate' : 'draw'}`);
@@ -25,29 +25,32 @@ async function play () {
         console.time('Calculated in');
         const move = game.aiMove(status.turn === 'black' ? blackAiLevel : whiteAiLevel);
         console.log(`${status.turn.toUpperCase()} move ${JSON.stringify(move)}`);
-        // white castle queen side
-        if(Object.keys(move)[0] === 'E1' && (Object.values(move)[0] === 'C1')) {
-            let rook = getPieceAt('A1');
-            rook.placeOnSquare('D1');
-        }
-        // white castle king side
-        if(Object.keys(move)[0] === 'E1' && (Object.values(move)[0] === 'G1')) {
-            let rook = getPieceAt('H1');
-            rook.placeOnSquare('F1');
-        }
-        // black castle king side
-        if(Object.keys(move)[0] === 'E8' && (Object.values(move)[0] === 'C8')) {
-            let rook = getPieceAt('A8');
-            rook.placeOnSquare('D8');
-        }
-        // black castle queen side
-        if(Object.keys(move)[0] === 'E8' && (Object.values(move)[0] === 'G8')) {
-            let rook = getPieceAt('H8');
-            rook.placeOnSquare('F8');
-        }
-
         let piece = getPieceAt(Object.keys(move)[0]);
         piece.placeOnSquare(Object.values(move)[0]);
+        // check castling
+        if(piece.getPiece() === 'K' || piece.getPiece() === 'k') {
+            // white castle queen side
+            if (Object.keys(move)[0] === 'E1' && (Object.values(move)[0] === 'C1')) {
+                let rook = getPieceAt('A1');
+                rook.placeOnSquare('D1');
+            }
+            // white castle king side
+            if (Object.keys(move)[0] === 'E1' && (Object.values(move)[0] === 'G1')) {
+                let rook = getPieceAt('H1');
+                rook.placeOnSquare('F1');
+            }
+            // black castle king side
+            if (Object.keys(move)[0] === 'E8' && (Object.values(move)[0] === 'C8')) {
+                let rook = getPieceAt('A8');
+                rook.placeOnSquare('D8');
+            }
+            // black castle queen side
+            if (Object.keys(move)[0] === 'E8' && (Object.values(move)[0] === 'G8')) {
+                let rook = getPieceAt('H8');
+                rook.placeOnSquare('F8');
+            }
+        }
+
         console.timeEnd('Calculated in');
         await play();
     }
