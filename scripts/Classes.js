@@ -29,6 +29,8 @@ class GameObject {
         this.glProgramInfo = (glProgram);
 
         this.position = [0, 0, 0];
+        this.square = 'A0';
+        this.piece = 'NULL';
         this.yaw = 0;
         this.pitch = 0;
         this.roll = 0;
@@ -64,17 +66,26 @@ class GameObject {
     setDiffuseColor(red, green, blue, alpha) {
         this.color = [red, green, blue, alpha];
     }
- 
 
+    setPiece(piece) {
+        this.piece = piece;
+    }
+
+    getPiece() {
+        return this.piece;
+    }
     
     placeOnSquare(square) {
         let tempArray1 = square.split("");
         let col = tempArray1[0];
         let row = tempArray1[1];
-        this.setPosition(coorColumnsMap.get(col), zPos, coorRowsMap.get(row));   
+        this.setPosition(coorColumnsMap.get(col), zPos, coorRowsMap.get(row));
+        this.square = square;
     }
-    
-  
+
+    getSquare() {
+        return this.square;
+    }
 
     #computeWorldMatrix() {
         let scaleMatrix = utils.MakeScaleMatrix(this.scale);
@@ -124,18 +135,3 @@ class GameObject {
         gl.drawElements(gl.TRIANGLES, this.mesh.indices.length, gl.UNSIGNED_SHORT, 0);
     }
 }
-
-/*
-
-// Defining class using es6
-class Vehicle {
-  constructor(name, maker, engine) {
-    this.name = name;
-    this.maker =  maker;
-    this.engine = engine;
-  }
-  getDetails(){
-      return (`The name of the bike is ${this.name}.`)
-  }
-}
- */
