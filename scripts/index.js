@@ -1,5 +1,9 @@
 import {Game} from "../scripts/js-chess-engine.mjs";
 
+async function sleepGame(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 console.log("Hello Ale, Ali and Luca!")
 
 const whiteAiLevel = 0;
@@ -11,6 +15,8 @@ console.log(game.exportJson());
 var outWhite = 0;
 var outBlack = 0;
 
+var isAnimating = false;
+
 // start the game - create pieces
 for (const [key, value] of Object.entries(game.board.configuration.pieces)) {
     let color = (value === value.toUpperCase()) ? 'w' : 'b';
@@ -20,11 +26,9 @@ for (const [key, value] of Object.entries(game.board.configuration.pieces)) {
 await play()
 
 async function play () {
-    await sleep(200);
+    await sleepGame(2000);
     const status = game.exportJson();
-    if (status.isFinished) {
-        console.log(`${status.turn} is in ${status.checkMate ? 'checkmate' : 'draw'}`);
-    } else {
+    if (!status.isFinished) {
         console.time('Calculated in');
         const move = game.aiMove(status.turn === 'black' ? blackAiLevel : whiteAiLevel);
         console.log(`${status.turn.toUpperCase()} move ${JSON.stringify(move)}`);
@@ -32,22 +36,28 @@ async function play () {
         let moveTo = Object.values(move)[0];
         let moveFrom = Object.keys(move)[0];
         let object = getPieceAt(moveTo);
-        if(typeof object !== "undefined") {
+        if (typeof object !== "undefined") {
             object.placeOnSquare("A0");
-            if(status.turn === 'white') {
+            if (status.turn === 'white') {
                 object.setPosition(7 + (outBlack / 4) * 2 + Math.random(), zPos, 5 - (outBlack % 4) * 2 - Math.random());
-                outBlack ++;
-            }
-            else{
+                outBlack++;
+            } else {
                 object.setPosition(-7 - (outWhite / 4) * 2 - Math.random(), zPos, -5 + (outWhite % 4) * 2 + Math.random());
-                outWhite ++;
+                outWhite++;
             }
 
         }
+        isAnimating = true;
+        await animation(isAnimating, object, moveFrom, moveTo);
+        /*
+        while(isAnimating) {
+            sleep(1000);
+        }
+         */
         let piece = getPieceAt(moveFrom);
         piece.placeOnSquare(moveTo);
         // check castling
-        if(piece.getPiece() === 'K' || piece.getPiece() === 'k') {
+        if (piece.getPiece() === 'K' || piece.getPiece() === 'k') {
             // white castle queen side
             if (moveFrom === 'E1' && (moveTo === 'C1')) {
                 let rook = getPieceAt('A1');
@@ -72,5 +82,7 @@ async function play () {
 
         console.timeEnd('Calculated in');
         await play();
+    } else {
+        console.log(`${status.turn} is in ${status.checkMate ? 'checkmate' : 'draw'}`);
     }
 }

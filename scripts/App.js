@@ -5,6 +5,13 @@
 var glProgram = 0;
 var gl = 0;
 var Scene = [];
+var timer = 0;
+
+//for the animation
+var isAnimating;
+var pieceToMove;
+var moveFrom;
+var moveTo;
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -32,6 +39,27 @@ function getPieceAt(square) {
 async function loadAndInitMesh(resourceURI) {
     let objString = await utils.get_objstr(resourceURI);
     return new OBJ.Mesh(objString);
+}
+
+async function animation(condition, piece, from, to) {
+    isAnimating = condition;
+    pieceToMove = piece;
+    moveFrom = from;
+    moveTo = to;
+    if(isAnimating) {
+        console.log("this is an animation")
+        if(timer < 10) {
+            //aggiungere alla funzione parametri tipo pezzo da muovere, from e to e fare object.setPosition interpolando in qualche modo
+            Scene[2].setDiffuseColor(Math.floor(Math.random()*100)/100, Math.floor(Math.random()*100)/100, Math.floor(Math.random()*100)/100, 0.5);
+            timer ++;
+            console.log("hihi")
+        }
+        else {
+            timer = 0;
+            isAnimating = false; //animation terminated
+            console.log("ciao vecchio");
+        }
+    }
 }
 
 function initVAO(gl, program, mesh) {
@@ -114,7 +142,7 @@ async function main() {
 
     function render(time) {
         time *= 0.001;  // convert to seconds
-
+    console.log("this is not")
         const INPUT_SCALE = 1;
 
         let cam_x_pos = document.getElementById("cxpos").value / INPUT_SCALE;
@@ -144,6 +172,13 @@ async function main() {
         //* ==========================================================================================================================================
 
 
+        //animation
+        animation(isAnimating);
+
+
+
+
+
         /**
          * FOR EACH VAO / 3D MODEL IN THE SCENE
          * ==========================================================================================================================================
@@ -161,8 +196,7 @@ async function main() {
 
 
         } )
-
-        requestAnimationFrame(render);
+            requestAnimationFrame(render);
     }
 
     requestAnimationFrame(render);
