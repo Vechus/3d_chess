@@ -20,7 +20,7 @@ for (const [key, value] of Object.entries(game.board.configuration.pieces)) {
 await play()
 
 async function play () {
-    await sleep(200);
+    await sleep(3000);
     const status = game.exportJson();
     if (status.isFinished) {
         console.log(`${status.turn} is in ${status.checkMate ? 'checkmate' : 'draw'}`);

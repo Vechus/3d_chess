@@ -2,7 +2,6 @@
 precision highp float;
 
 in vec3 fsNormal;
-//in vec4 v_color;
 
 uniform vec4 u_diffuse;
 uniform vec3 u_lightDirection;

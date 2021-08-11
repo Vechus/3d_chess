@@ -76,9 +76,9 @@ async function main() {
         return;
     }
 
-    //SHADERS ====================================================================================================================================
+    //SHADERS (PHONG) ====================================================================================================================================
     const shaderDir = "../shaders/"
-    await utils.loadFiles([shaderDir + 'vs.glsl', shaderDir + 'fs.glsl'], function (shaderText) {
+    await utils.loadFiles([shaderDir + 'vs.glsl', shaderDir + 'fs_phong.glsl'], function (shaderText) {
         var vertexShader = utils.createShader(gl, gl.VERTEX_SHADER, shaderText[0]);
         var fragmentShader = utils.createShader(gl, gl.FRAGMENT_SHADER, shaderText[1]);
         glProgram = utils.createProgram(gl, vertexShader, fragmentShader);
@@ -162,8 +162,12 @@ async function main() {
             gl.useProgram(sceneObject.glProgramInfo); //TODO pick at every iteration the program info of the rendered object
 
             gl.bindVertexArray(sceneObject.VAO);
-            sceneObject.render(gl, projectionMatrix, viewMatrix, u_lightDirection);
+            //sceneObject.render(gl, projectionMatrix, viewMatrix, u_lightDirection);
+            //->introducing phong
+            //renderPhong(gl, projectionMatrix, viewMatrix, phongShader, eyeDirectionV3, lightDirectionV3, lightColorV4, ambientLightV4)
 
+            let objPhongShader = new PhongShader(16.0, [0.5, .5, .5, 1.0], [0.5, 0.3, 1.0, 1.0], [0.0, 0.0, 0.0, 1.0])
+            sceneObject.renderPhong(gl,projectionMatrix,viewMatrix, objPhongShader, cameraPosition, u_lightDirection, [0.8,.8,.8,1],[0.1, 0.1, 0.1, 1.0])
 
         } )
 
