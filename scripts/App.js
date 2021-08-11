@@ -84,7 +84,7 @@ async function main() {
         glProgram = utils.createProgram(gl, vertexShader, fragmentShader);
     });
 
-    //FETCH ASSETS TODO encapsulate this into a constructor??
+    //FETCH ASSETS
     //* ==========================================================================================================================================
 
     let boardGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Board.obj'));
@@ -121,6 +121,9 @@ async function main() {
         let cam_y_pos = document.getElementById("cypos").value / INPUT_SCALE;
         let cam_z_pos = document.getElementById("czpos").value / INPUT_SCALE;
 
+        let lx = document.getElementById("lx").value;
+        let ly = document.getElementById("ly").value;
+        let lz = document.getElementById("lz").value;
 
         //INIT CAMERA STUFF * ==========================================================================================================================================
         //* ==========================================================================================================================================
@@ -149,10 +152,12 @@ async function main() {
          * ==========================================================================================================================================
          */
 
-        let u_lightDirection = m4.normalize([-1, 3, 5]); //temp TODO array of light sources (ambient, directionals, spots, emitters ...)
+        //LIGHT=====================================================================================================================
+        let lDirectionVector = [lx, ly, lz]
+        let u_lightDirection = (lDirectionVector); //no need to normalize, vector components swing between -1 and 1
 
         Scene.forEach((sceneObject) => {
-            //LIGHT=====================================================================================================================
+
 
             gl.useProgram(sceneObject.glProgramInfo); //TODO pick at every iteration the program info of the rendered object
 
