@@ -21,7 +21,7 @@ async function createGamePiece(pieceName, coordinate, color) {
 }
 
 function getPieceAt(square) {
-    let obj;
+    let obj = undefined;
     Scene.forEach((x) => {
         //console.log(x.getSquare(), square);
         if(x.getSquare() === square) obj = x;
