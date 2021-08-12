@@ -1,8 +1,8 @@
 #version 300 es
 precision highp float;
 
-in vec3 fsNormal;
-
+in vec3 fsNormal; //from vertex shader
+in vec2 uvFS; //from vertex shader
 
 uniform float specularShine;		// specular coefficient for both Blinn and Phong
 uniform vec4 diffColor;		    // diffuse color
@@ -14,6 +14,8 @@ uniform vec3 eyedirVec;		    // looking direction
 uniform vec3 lightDirectionVector;
 uniform vec4 lightColor;
 uniform vec4 ambientLight;
+
+uniform sampler2D u_texture;
 
 out vec4 outColor;
 
@@ -35,5 +37,5 @@ void main() {
     vec4 diffContrA = diffColor  * dot(lightDirectionVector, normal) * lightColor;
     vec4 diffuse = diffContrA;
     //with EMISSION (emit)
-    outColor = clamp( ambientCo + phongSpecular + diffuse + emit, 0.0, 1.0);
+    outColor = clamp( (ambientCo + phongSpecular + diffuse + emit) * texture(u_texture, uvFS), 0.0, 1.0);
 }

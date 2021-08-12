@@ -43,6 +43,10 @@ class GameObject {
 
     }
 
+    setName(name) {
+        this._name = name;
+    }
+
     setProgramInfo(glProgramInfo) {
         this.glProgramInfo = glProgramInfo;
     }
@@ -112,6 +116,10 @@ class GameObject {
         );
     }
 
+    setTexture(texture) {
+        if (!texture instanceof Texture) console.error("Give me a texture please.")
+        this._activeTexture = texture;
+    }
     render(gl, projectionMatrix, viewMatrix, lightDirection) {
 
         let fsDiffuseColor4 = gl.getUniformLocation(glProgram, 'u_diffuse');
@@ -179,6 +187,16 @@ class GameObject {
         let fsAmbientLight = gl.getUniformLocation(glProgram, 'ambientLight');
         gl.uniform4fv(fsAmbientLight, ambientLightV4);
 
+
+        //Textures
+        if (this._activeTexture !== undefined) {
+            let textLocation = gl.getUniformLocation(glProgram, "u_texture");
+            gl.activeTexture(gl.TEXTURE0);
+            gl.bindTexture(gl.TEXTURE_2D, this._activeTexture._texture);
+            gl.uniform1i(textLocation, 0);
+        }
+
+
         ////
 
         gl.drawElements(gl.TRIANGLES, this.mesh.indices.length, gl.UNSIGNED_SHORT, 0);
@@ -205,5 +223,32 @@ class PhongShader {
         this.ambColorV4 = ambColorV4;
         this.specularColorV4 = specularColorV4;
         this.emitV4 = emitV4;
+    }
+}
+
+class Texture {
+
+    constructor(gl, imageUrl) {
+
+        this._texture = gl.createTexture()
+        // use texture unit 0
+        gl.activeTexture(gl.TEXTURE0);
+        // bind to the TEXTURE_2D bind point of texture unit 0
+        gl.bindTexture(gl.TEXTURE_2D, this._texture);
+
+        let image = new Image()
+        image.src = imageUrl
+        image.onload = function (eden) {
+            //Make sure this is the active one
+            gl.activeTexture(gl.TEXTURE0);
+            gl.bindTexture(gl.TEXTURE_2D, this._texture);
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+            gl.generateMipmap(gl.TEXTURE_2D);
+        }
     }
 }
