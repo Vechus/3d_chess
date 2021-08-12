@@ -1,4 +1,4 @@
-import {Game} from "../scripts/js-chess-engine.mjs";
+import {Game} from "./js-chess-engine.mjs";
 
 async function sleepGame(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -15,7 +15,6 @@ console.log(game.exportJson());
 var outWhite = 0;
 var outBlack = 0;
 
-var isAnimating = false;
 
 // start the game - create pieces
 for (const [key, value] of Object.entries(game.board.configuration.pieces)) {
@@ -39,22 +38,21 @@ async function play () {
         if (typeof object !== "undefined") {
             object.placeOnSquare("A0");
             if (status.turn === 'white') {
-                object.setPosition(7 + (outBlack / 4) * 2 + Math.random(), zPos, 5 - (outBlack % 4) * 2 - Math.random());
+                object.setPosition(7 + (outBlack / 4) * 2 + Math.random(), yPos, 5 - (outBlack % 4) * 2 - Math.random());
                 outBlack++;
             } else {
-                object.setPosition(-7 - (outWhite / 4) * 2 - Math.random(), zPos, -5 + (outWhite % 4) * 2 + Math.random());
+                object.setPosition(-7 - (outWhite / 4) * 2 - Math.random(), yPos, -5 + (outWhite % 4) * 2 + Math.random());
                 outWhite++;
             }
 
         }
-        isAnimating = true;
-        await animation(isAnimating, object, moveFrom, moveTo);
-        /*
-        while(isAnimating) {
-            sleep(1000);
-        }
-         */
         let piece = getPieceAt(moveFrom);
+        await startAnimation(piece, moveFrom, moveTo);
+        window.isAnimating = true;
+        while(window.isAnimating) {
+            await sleep(1000);
+        }
+
         piece.placeOnSquare(moveTo);
         // check castling
         if (piece.getPiece() === 'K' || piece.getPiece() === 'k') {

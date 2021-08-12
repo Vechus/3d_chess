@@ -20,7 +20,7 @@ const coorRowsMap = new Map([
     ['8', -5.2]
 ]);
 
-const zPos = 0.7;
+const yPos = 0.7;
 
 class GameObject {
     constructor(gl, glProgram, mesh) {
@@ -51,6 +51,10 @@ class GameObject {
         this.position = [x,y,z];
     }
 
+    getPosition() {
+        return this.position;
+    }
+
     setPitch(p) {
         this.pitch = p;
     }
@@ -79,7 +83,7 @@ class GameObject {
         let tempArray1 = square.split("");
         let col = tempArray1[0];
         let row = tempArray1[1];
-        this.setPosition(coorColumnsMap.get(col), zPos, coorRowsMap.get(row));
+        this.setPosition(coorColumnsMap.get(col), yPos, coorRowsMap.get(row));
         this.square = square;
     }
 

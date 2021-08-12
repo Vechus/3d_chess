@@ -5,13 +5,15 @@
 var glProgram = 0;
 var gl = 0;
 var Scene = [];
-var timer = 0;
+var timer;
 
 //for the animation
-var isAnimating;
 var pieceToMove;
 var moveFrom;
 var moveTo;
+var stepX;
+var stepZ;
+const frames = 10;
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -41,24 +43,36 @@ async function loadAndInitMesh(resourceURI) {
     return new OBJ.Mesh(objString);
 }
 
-async function animation(condition, piece, from, to) {
-    isAnimating = condition;
+function getPositionFromSquare(square) {
+    let tempArray1 = square.split("");
+    let col = tempArray1[0];
+    let row = tempArray1[1];
+    return [coorColumnsMap.get(col), yPos, coorRowsMap.get(row)];
+}
+
+async function startAnimation(piece, from, to) {
+    console.log("start")
     pieceToMove = piece;
-    moveFrom = from;
-    moveTo = to;
-    if(isAnimating) {
-        console.log("this is an animation")
-        if(timer < 10) {
-            //aggiungere alla funzione parametri tipo pezzo da muovere, from e to e fare object.setPosition interpolando in qualche modo
-            Scene[2].setDiffuseColor(Math.floor(Math.random()*100)/100, Math.floor(Math.random()*100)/100, Math.floor(Math.random()*100)/100, 0.5);
-            timer ++;
-            console.log("hihi")
-        }
-        else {
-            timer = 0;
-            isAnimating = false; //animation terminated
-            console.log("ciao vecchio");
-        }
+    moveFrom = getPositionFromSquare(from); //get coordinates
+    moveTo = getPositionFromSquare(to);
+    timer = 0;
+    stepX = (moveTo[0] - moveFrom[0]) / frames;
+    stepZ = (moveTo[2] - moveFrom[2]) / frames;
+    timer ++;
+}
+
+
+function animation() {
+    if(timer <= frames) {
+        let z = pieceToMove.getPosition()[2];
+        pieceToMove.setPosition(moveFrom[0] + stepX * timer, yPos, moveFrom[2] + stepZ * timer);
+        timer ++;
+    }
+    else {
+        window.isAnimating = false; //animation terminated
+        pieceToMove = undefined;
+        moveFrom = undefined;
+        moveTo = undefined;
     }
 }
 
@@ -142,7 +156,6 @@ async function main() {
 
     function render(time) {
         time *= 0.001;  // convert to seconds
-    console.log("this is not")
         const INPUT_SCALE = 1;
 
         let cam_x_pos = document.getElementById("cxpos").value / INPUT_SCALE;
@@ -173,8 +186,8 @@ async function main() {
 
 
         //animation
-        animation(isAnimating);
-
+        if(window.isAnimating) animation();
+console.log("isanimating " + window.isAnimating);
 
 
 
