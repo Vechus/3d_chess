@@ -25,7 +25,7 @@ for (const [key, value] of Object.entries(game.board.configuration.pieces)) {
 await play()
 
 async function play () {
-    await sleepGame(2000);
+    await sleep(3000);
     const status = game.exportJson();
     if (!status.isFinished) {
         console.time('Calculated in');

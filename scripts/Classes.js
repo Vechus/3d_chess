@@ -128,7 +128,6 @@ class GameObject {
 
         gl.uniformMatrix4fv(vsProjection, false, utils.transposeMatrix(projectionMatrix));
         gl.uniformMatrix4fv(vsView, false, utils.transposeMatrix(viewMatrix));
-
         gl.uniformMatrix4fv(vsWorld, false, utils.transposeMatrix(u_world));
 
         let materialColor = this.color
@@ -137,5 +136,74 @@ class GameObject {
         gl.uniform3fv(fsLightDirection3, lightDirection);
 
         gl.drawElements(gl.TRIANGLES, this.mesh.indices.length, gl.UNSIGNED_SHORT, 0);
+    }
+
+    renderPhong(gl, projectionMatrix, viewMatrix, phongShader, eyeDirectionV3, lightDirectionV3, lightColorV4, ambientLightV4) {
+
+        //Vertex Shader
+        let vsView = gl.getUniformLocation(glProgram, "u_view");
+        let vsProjection = gl.getUniformLocation(glProgram, 'u_projection');
+        let vsWorld = gl.getUniformLocation(glProgram, 'u_world');
+
+        let u_world = this.#computeWorldMatrix();
+        gl.uniformMatrix4fv(vsProjection, false, utils.transposeMatrix(projectionMatrix));
+        gl.uniformMatrix4fv(vsView, false, utils.transposeMatrix(viewMatrix));
+        gl.uniformMatrix4fv(vsWorld, false, utils.transposeMatrix(u_world));
+
+        //Fragment Shader
+
+        let fsSpecularShineF = gl.getUniformLocation(glProgram, 'specularShine');
+        gl.uniform1f(fsSpecularShineF, phongShader.specularShineF);
+
+        let fsDiffuseColor4 = gl.getUniformLocation(glProgram, 'diffColor');
+        gl.uniform4fv(fsDiffuseColor4, this.color);
+
+        let fsAmbientColor4 = gl.getUniformLocation(glProgram, 'ambColor');
+        gl.uniform4fv(fsAmbientColor4, phongShader.ambColorV4);
+
+        let fsSpecularColor4 = gl.getUniformLocation(glProgram, 'specularColor');
+        gl.uniform4fv(fsSpecularColor4, phongShader.specularColorV4);
+
+        let fsEmit4 = gl.getUniformLocation(glProgram, 'emit');
+        gl.uniform4fv(fsEmit4, phongShader.emitV4);
+
+        let fsEyeDirection3 = gl.getUniformLocation(glProgram, 'eyedirVec');
+        gl.uniform3fv(fsEyeDirection3, eyeDirectionV3);
+
+        let fsLightDirection3 = gl.getUniformLocation(glProgram, 'lightDirectionVector');
+        gl.uniform3fv(fsLightDirection3, lightDirectionV3);
+
+        let fsLightColor4 = gl.getUniformLocation(glProgram, 'lightColor');
+        gl.uniform4fv(fsLightColor4, lightColorV4);
+
+        let fsAmbientLight = gl.getUniformLocation(glProgram, 'ambientLight');
+        gl.uniform4fv(fsAmbientLight, ambientLightV4);
+
+        ////
+
+        gl.drawElements(gl.TRIANGLES, this.mesh.indices.length, gl.UNSIGNED_SHORT, 0);
+
+    }
+}
+
+/**
+ uniform float specularShine;		// specular coefficient for both Blinn and Phong
+ uniform vec4 diffColor;		    // diffuse color
+ uniform vec4 ambColor;		    // material ambient color
+ uniform vec4 specularColor;		// specular color
+ uniform vec4 emit;			    // emitted color
+
+ uniform vec3 eyedirVec;		    // looking direction
+ uniform vec3 lightDirectionVector;
+ uniform vec4 lightColor;
+ uniform vec4 ambientLight;
+ */
+class PhongShader {
+
+    constructor(specularShineF, ambColorV4, specularColorV4, emitV4) {
+        this.specularShineF = specularShineF;
+        this.ambColorV4 = ambColorV4;
+        this.specularColorV4 = specularColorV4;
+        this.emitV4 = emitV4;
     }
 }

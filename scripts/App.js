@@ -15,6 +15,8 @@ var stepX;
 var stepZ;
 const frames = 10;
 
+let VIEW
+
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -29,6 +31,9 @@ async function createGamePiece(pieceName, coordinate, color) {
     Scene.push(piece);
 }
 
+document.getElementById("view_btn").onclick = function() {
+    VIEW = pickNextView()
+}
 function getPieceAt(square) {
     let obj = undefined;
     Scene.forEach((x) => {
@@ -118,18 +123,18 @@ async function main() {
         return;
     }
 
-    //SHADERS ====================================================================================================================================
+    //SHADERS (PHONG) ====================================================================================================================================
     const shaderDir = "../shaders/"
-    await utils.loadFiles([shaderDir + 'vs.glsl', shaderDir + 'fs.glsl'], function (shaderText) {
+    await utils.loadFiles([shaderDir + 'vs.glsl', shaderDir + 'fs_phong.glsl'], function (shaderText) {
         var vertexShader = utils.createShader(gl, gl.VERTEX_SHADER, shaderText[0]);
         var fragmentShader = utils.createShader(gl, gl.FRAGMENT_SHADER, shaderText[1]);
         glProgram = utils.createProgram(gl, vertexShader, fragmentShader);
     });
 
-    //FETCH ASSETS TODO encapsulate this into a constructor??
+    //FETCH ASSETS
     //* ==========================================================================================================================================
 
-    let boardGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Board.obj'));
+    let boardGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/newboard/NewBoardResized.obj'));
     boardGameObject.setPosition(0,0,0);
     boardGameObject.setYaw(45);
 
@@ -137,6 +142,7 @@ async function main() {
     //tempArray.forEach(element => Scene.push(element));
     //Scene.push(boardGameObject, bishopGameObject, kingGameObject, knightGameObject, queenGameObject, rookGameObject);
 
+    VIEW = pickNextView()
 
 
     //==========================================================================================================================================
@@ -156,12 +162,28 @@ async function main() {
 
     function render(time) {
         time *= 0.001;  // convert to seconds
-        const INPUT_SCALE = 1;
 
-        let cam_x_pos = document.getElementById("cxpos").value / INPUT_SCALE;
-        let cam_y_pos = document.getElementById("cypos").value / INPUT_SCALE;
-        let cam_z_pos = document.getElementById("czpos").value / INPUT_SCALE;
+        //const INPUT_SCALE = 1;
 
+        //let cam_x_pos = document.getElementById("cxpos").value / INPUT_SCALE;
+        //let cam_y_pos = document.getElementById("cypos").value / INPUT_SCALE;
+        //let cam_z_pos = document.getElementById("czpos").value / INPUT_SCALE;
+
+        let cam_x_pos = views.get(VIEW)[0]
+        let cam_y_pos = views.get(VIEW)[1]
+        let cam_z_pos = views.get(VIEW)[2]
+
+        let lx = document.getElementById("lx").value;
+        let ly = document.getElementById("ly").value;
+        let lz = document.getElementById("lz").value;
+
+        let infoText = "Camera Position: " + cam_x_pos + " " + cam_y_pos + " " + cam_z_pos +
+            "" +
+            "" +
+            "" +
+            ""
+        document.getElementById("info-box").innerText = infoText;
+        document.getElementById("view_btn").innerText = VIEW
 
         //INIT CAMERA STUFF * ==========================================================================================================================================
         //* ==========================================================================================================================================
@@ -170,13 +192,10 @@ async function main() {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         let aspect = gl.canvas.width / gl.canvas.height;
 
-
         let cameraPosition = [cam_x_pos, cam_y_pos, cam_z_pos];
         let target = [0.0, 0.0, 0.0];
         let up = [0.0, 1.0, 0.0];
-
         let cameraMatrix = utils.LookAt(cameraPosition, target, up);
-
         let viewMatrix = utils.invertMatrix(cameraMatrix);
         let projectionMatrix = utils.MakePerspective(60.0, aspect, 0.01, 20000.0);
 
@@ -197,16 +216,20 @@ console.log("isanimating " + window.isAnimating);
          * ==========================================================================================================================================
          */
 
-        let u_lightDirection = m4.normalize([-1, 3, 5]); //temp TODO array of light sources (ambient, directionals, spots, emitters ...)
+        //LIGHT=====================================================================================================================
+        let lDirectionVector = [lx, ly, lz]
+        let u_lightDirection = (lDirectionVector); //no need to normalize, vector components swing between -1 and 1
 
         Scene.forEach((sceneObject) => {
-            //LIGHT=====================================================================================================================
 
             gl.useProgram(sceneObject.glProgramInfo); //TODO pick at every iteration the program info of the rendered object
-
             gl.bindVertexArray(sceneObject.VAO);
-            sceneObject.render(gl, projectionMatrix, viewMatrix, u_lightDirection);
+            //sceneObject.render(gl, projectionMatrix, viewMatrix, u_lightDirection);
+            //->introducing phong
+            //renderPhong(gl, projectionMatrix, viewMatrix, phongShader, eyeDirectionV3, lightDirectionV3, lightColorV4, ambientLightV4)
 
+            let objPhongShader = new PhongShader(16.0, [0.5, .5, .5, 1.0], [0.5, 0.3, 1.0, 1.0], [0.0, 0.0, 0.0, 1.0])
+            sceneObject.renderPhong(gl,projectionMatrix,viewMatrix, objPhongShader, cameraPosition, u_lightDirection, [0.8,.8,.8,1],[0.1, 0.1, 0.1, 1.0])
 
         } )
             requestAnimationFrame(render);
