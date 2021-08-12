@@ -92,7 +92,7 @@ async function main() {
     //FETCH ASSETS
     //* ==========================================================================================================================================
 
-    let boardGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/Board.obj'));
+    let boardGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/newboard/NewBoardResized.obj'));
     boardGameObject.setPosition(0,0,0);
     boardGameObject.setYaw(45);
 
