@@ -6,6 +6,8 @@ var glProgram = 0;
 var gl = 0;
 var Scene = [];
 
+let VIEW
+
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -20,6 +22,9 @@ async function createGamePiece(pieceName, coordinate, color) {
     Scene.push(piece);
 }
 
+document.getElementById("view_btn").onclick = function() {
+    VIEW = pickNextView()
+}
 function getPieceAt(square) {
     let obj = undefined;
     Scene.forEach((x) => {
@@ -95,6 +100,7 @@ async function main() {
     //tempArray.forEach(element => Scene.push(element));
     //Scene.push(boardGameObject, bishopGameObject, kingGameObject, knightGameObject, queenGameObject, rookGameObject);
 
+    VIEW = pickNextView()
 
 
     //==========================================================================================================================================
@@ -115,15 +121,27 @@ async function main() {
     function render(time) {
         time *= 0.001;  // convert to seconds
 
-        const INPUT_SCALE = 1;
+        //const INPUT_SCALE = 1;
 
-        let cam_x_pos = document.getElementById("cxpos").value / INPUT_SCALE;
-        let cam_y_pos = document.getElementById("cypos").value / INPUT_SCALE;
-        let cam_z_pos = document.getElementById("czpos").value / INPUT_SCALE;
+        //let cam_x_pos = document.getElementById("cxpos").value / INPUT_SCALE;
+        //let cam_y_pos = document.getElementById("cypos").value / INPUT_SCALE;
+        //let cam_z_pos = document.getElementById("czpos").value / INPUT_SCALE;
+
+        let cam_x_pos = views.get(VIEW)[0]
+        let cam_y_pos = views.get(VIEW)[1]
+        let cam_z_pos = views.get(VIEW)[2]
 
         let lx = document.getElementById("lx").value;
         let ly = document.getElementById("ly").value;
         let lz = document.getElementById("lz").value;
+
+        let infoText = "Camera Position: " + cam_x_pos + " " + cam_y_pos + " " + cam_z_pos +
+            "" +
+            "" +
+            "" +
+            ""
+        document.getElementById("info-box").innerText = infoText;
+        document.getElementById("view_btn").innerText = VIEW
 
         //INIT CAMERA STUFF * ==========================================================================================================================================
         //* ==========================================================================================================================================
@@ -132,13 +150,10 @@ async function main() {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         let aspect = gl.canvas.width / gl.canvas.height;
 
-
         let cameraPosition = [cam_x_pos, cam_y_pos, cam_z_pos];
         let target = [0.0, 0.0, 0.0];
         let up = [0.0, 1.0, 0.0];
-
         let cameraMatrix = utils.LookAt(cameraPosition, target, up);
-
         let viewMatrix = utils.invertMatrix(cameraMatrix);
         let projectionMatrix = utils.MakePerspective(60.0, aspect, 0.01, 20000.0);
 
@@ -158,9 +173,7 @@ async function main() {
 
         Scene.forEach((sceneObject) => {
 
-
             gl.useProgram(sceneObject.glProgramInfo); //TODO pick at every iteration the program info of the rendered object
-
             gl.bindVertexArray(sceneObject.VAO);
             //sceneObject.render(gl, projectionMatrix, viewMatrix, u_lightDirection);
             //->introducing phong
