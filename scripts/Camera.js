@@ -5,7 +5,12 @@ const views = new Map([
     ['BLACK', [0, 11, -7]],
     ['TOP', [0, 12, 0]]
 ]);
+
 let currentIndex = 0;
 function pickNextView() {
     return viewOrder.get(currentIndex++ % 4)
+}
+
+function pickView(n) {
+    return viewOrder.get(n % 4);
 }

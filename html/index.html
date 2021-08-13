@@ -58,30 +58,75 @@
         <div class="p-2 bd-highlight">
             <div class="card bg-dark text-white" style="width: 18rem;">
                 <!-- <img class="card-img-top" src="..." alt="Card image cap"> -->
+                <div class="card-body">
+                    <h5 class="card-title" id="game-title">Game controls</h5>
+
+                    <h4 class="card-title" id="gameType-subtitle">Select game type</h4>
+
+                    <div class="btn-group-vertical btn-group-toggle" data-toggle="buttons">
+                        <label class="btn btn-secondary active">
+                            <input type="radio" name="IAvIA" id="optionIAvIA" autocomplete="off" checked> PC vs PC
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="HvIA" id="optionHvIA" autocomplete="off"> Human vs PC
+                        </label><label class="btn btn-secondary">
+                        <input type="radio" name="HvH" id="optionHvH" autocomplete="off"> Human vs Human
+                    </label>
+                    </div>
+
+                    <hr/>
+
+                    <h4 class="card-title" id="level-subtitle">Select computer level</h4>
+
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="optionIA0" id="optionIA0" autocomplete="off"> 0
+                        </label>
+                        <label class="btn btn-secondary active">
+                            <input type="radio" name="optionIA1" id="optionIA1" autocomplete="off" checked> 1
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="optionIA2" id="optionIA2" autocomplete="off"> 2
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="optionIA3" id="optionIA3" autocomplete="off"> 3
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="optionIA4" id="optionIA4" autocomplete="off"> 4
+                        </label>
+                    </div>
+
+                    <hr/>
+
+                    <h4 class="card-title" id="side-subtitle">Play as</h4>
+
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="playAsWhite" id="optionWhite" autocomplete="off"> White
+                        </label>
+                        <label class="btn btn-secondary active">
+                            <input type="radio" name="playAsRandom" id="optionRandom" autocomplete="off" checked> Random
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input type="radio" name="playAsBlack" id="optionBlack" autocomplete="off"> Black
+                        </label>
+                    </div>
+                </div>
+
+                <hr/>
+
+                <button type="button" class="btn btn-success btn-lg btn-block" id="startGameButton">Start new game</button>
+
+                <hr/>
 
                 <div>
                     <h5>Change View:</h5>
                     <button type="button" class="btn btn-primary" id="view_btn">Change View</button>
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title" id="card-title">Side card</h5>
+                    <h5 class="card-title" id="card-title">Controls</h5>
 
                     <form class="controls">
-                        <label for="cxrot" class="form-label">Camera X Rotation</label>
-                        <input type="range" class="form-range" id="cxrot" value="0">
-
-                        <label for="cyrot" class="form-label">Camera Y Rotation</label>
-                        <input type="range" class="form-range" id="cyrot" value="0">
-                        <hr>
-                        <label for="cxpos" class="form-label">Camera X Pos</label>
-                        <input type="range" class="form-range" min="-50" max="50" id="cxpos" value="0">
-
-                        <label for="cypos" class="form-label">Camera Y Pos</label>
-                        <input type="range" class="form-range" min="-50" max="50" id="cypos" value="6">
-
-                        <label for="czpos" class="form-label">Camera Z Pos</label>
-                        <input type="range" class="form-range" min="-50" max="50" id="czpos" value="12">
-
                         <hr>
                         <h3>LIGHT</h3>
                         <label for="lx" class="form-label">Light Direction (x)</label>
@@ -92,11 +137,6 @@
                         <input type="range" class="form-range" min="-1" max="1" id="lz" value="0.7" step="0.001">
                         <hr>
                         <div id="info-box"> Camera pos x y z rot</div>
-                        <div id="clipX"></div>
-                        <div id="clipY"></div>
-                        <div id="start"></div>
-                        <div id="end"></div>
-                        <div id="inters"></div>
                     </form>
                 </div>
                 <div class="card-body">
