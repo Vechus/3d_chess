@@ -17,6 +17,10 @@ const frames = 10;
 
 let VIEW
 
+var clipX = 0, clipY = 0;
+var pX = 0, pY = 0;
+var ray_nds = [0, 0, 0];
+
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -122,6 +126,9 @@ async function main() {
         return;
     }
 
+    const nearPlane = 0.01;
+    const farPlane = 20000;
+
     //SHADERS (PHONG) ====================================================================================================================================
     const shaderDir = "../shaders/"
     await utils.loadFiles([shaderDir + 'vs.glsl', shaderDir + 'fs_phong.glsl'], function (shaderText) {
@@ -133,18 +140,26 @@ async function main() {
     //FETCH ASSETS
     //* ==========================================================================================================================================
 
+    const boardPlane = {
+        p0: [0, 0.7, 0],
+        p1: [1, 0.7, 1],
+        p2: [1, 0.7, -1]
+    };
+
     let boardGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/newboard/NewBoardResized.obj'));
     boardGameObject.setPosition(0, 0, 0);
     boardGameObject.setName("board")
     boardGameObject.setTexture(new Texture(gl, "../assets/models/newboard/Textures/Chess_Board.jpg"))
     boardGameObject.setYaw(45);
 
+    let testPawn = createPiece(gl, glProgram, await loadAndInitMesh(getModelPathFromPiece('p')), 'A0', 'w', 'p');
+    Scene.push(testPawn);
 
     Scene.push(boardGameObject);
     //tempArray.forEach(element => Scene.push(element));
     //Scene.push(boardGameObject, bishopGameObject, kingGameObject, knightGameObject, queenGameObject, rookGameObject);
 
-    VIEW = pickNextView()
+    VIEW = pickNextView();
 
 
     //==========================================================================================================================================
@@ -200,12 +215,34 @@ async function main() {
         let up = [0.0, 1.0, 0.0];
         let cameraMatrix = utils.LookAt(cameraPosition, target, up);
         let viewMatrix = utils.invertMatrix(cameraMatrix);
-        let projectionMatrix = utils.MakePerspective(60.0, aspect, 0.01, 20000.0);
+        let projectionMatrix = utils.MakePerspective(60.0, aspect, nearPlane, farPlane);
 
 
         //* ==========================================================================================================================================
         //* ==========================================================================================================================================
 
+        // raycasting transformations: from pixel to position
+        let projectionView = utils.multiplyMatrices(projectionMatrix, viewMatrix);
+        let invProjView = utils.invertMatrix(projectionView);
+        let rect = canvas.getBoundingClientRect();
+        let viewPort = [rect.x, rect.y, rect.width, rect.height];
+        let ray = [];
+        raycast.unproject(ray, [pX, pY, 0], viewPort, invProjView);
+        // last temptative
+        let ray_clip = [ray_nds[0], ray_nds[1], -1, 1];
+        let ray_eye = utils.multiplyMatrixVector(m4.inverse(projectionMatrix), ray_clip);
+        ray_eye = [ ray_eye[0], ray_eye[1], -1, 0 ];
+        let ray_wor = utils.multiplyMatrixVector(utils.invertMatrix(viewMatrix), ray_eye).slice(0, 3);
+        utils.normalize(ray_wor, ray_wor);
+
+        // coordinate on the board plane
+        const intersection = raycast.linePlaneIntersection(boardPlane, cameraPosition, ray_wor);
+
+        testPawn.setPosition(intersection[0], intersection[1], intersection[2]);
+
+        document.getElementById("start").innerHTML = `s: ${cameraPosition}`;
+        document.getElementById("end").innerHTML = `e: ${ray_wor}`;
+        document.getElementById("inters").innerHTML = `i: ${intersection}`;
 
         //animation
         if (window.isAnimating) animation();
@@ -238,7 +275,20 @@ async function main() {
         })
         requestAnimationFrame(render);
     }
+    gl.canvas.addEventListener('mousemove', (e) => {
+        const canvas = gl.canvas;
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
 
+        pX = x;
+        pY = y;
+        clipX = x / rect.width * 2 - 1;
+        clipY = 1 - y / rect.height * 2;
+        ray_nds = [clipX, clipY, 1];
+        document.getElementById("clipX").innerHTML = `clipX: ${clipX}`;
+        document.getElementById("clipY").innerHTML = `clipY: ${clipY}`;
+    });
     requestAnimationFrame(render);
 }
 
