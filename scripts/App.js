@@ -146,10 +146,10 @@ async function main() {
         p2: [1, 0.7, -1]
     };
 
-    let boardGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/newboard/NewBoardResized.obj'));
+    let boardGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/newboard/BoardTop.obj'));
     boardGameObject.setPosition(0, 0, 0);
     boardGameObject.setName("board")
-    boardGameObject.setTexture(new Texture(gl, "../assets/models/newboard/Textures/Chess_Board.jpg"))
+    boardGameObject.setTexture(gl, "../assets/models/newboard/Textures/Wood.bmp")
     boardGameObject.setYaw(45);
 
     let testPawn = createPiece(gl, glProgram, await loadAndInitMesh(getModelPathFromPiece('p')), 'A0', 'w', 'p');
@@ -246,7 +246,7 @@ async function main() {
 
         //animation
         if (window.isAnimating) animation();
-        console.log("animating " + window.isAnimating);
+        //console.log("animating " + window.isAnimating);
 
 
         /**
