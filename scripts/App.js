@@ -62,9 +62,11 @@ function getPositionFromSquare(square) {
 
 async function startAnimation(piece, from, to) {
     console.log("start")
+    console.log(piece);
+
     pieceToMove = piece;
-    moveFrom = getPositionFromSquare(from); //get coordinates
-    moveTo = getPositionFromSquare(to);
+    moveFrom = from;
+    moveTo = to;
     timer = 0;
     stepX = (moveTo[0] - moveFrom[0]) / frames;
     stepZ = (moveTo[2] - moveFrom[2]) / frames;

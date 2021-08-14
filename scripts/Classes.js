@@ -95,6 +95,10 @@ class GameObject {
         return this.square;
     }
 
+    setSquare(square) {
+        this.square = square;
+    }
+
     #computeWorldMatrix() {
         let scaleMatrix = utils.MakeScaleMatrix(this.scale);
         let rotateXMatrix = utils.MakeRotateXMatrix(this.pitch);
