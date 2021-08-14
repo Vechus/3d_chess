@@ -1,8 +1,5 @@
 import {Game} from "./js-chess-engine.mjs";
 
-async function sleepGame(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 console.log("Hello Ale, Ali and Luca!")
 
@@ -13,6 +10,7 @@ let game = new Game();
 
 var outWhite = 0;
 var outBlack = 0;
+let isBeingReset = false;
 
 // describes the control state at the start of the game
 let gameControl = {
@@ -22,8 +20,12 @@ let gameControl = {
 }
 
 document.getElementById("startGameButton").onclick = async function () {
+    // app.js gets killed if restarting the game during animation
+    window.isAnimating = false;
+    isBeingReset = true;
+
     // TODO slice to 1 when unmounting raycast test
-    Scene = Scene.slice(0, 2);
+    Scene = Scene.slice(0, 1);
     game = new Game();
     if(document.getElementById("optionIAvIA").checked) {
         gameControl.gameType = 0;
@@ -69,17 +71,18 @@ async function startGame() {
         VIEW = pickView(1);
     }
 
-    // start the game - create pieces
+    // start the game - create pieces - takes time
     for (const [key, value] of Object.entries(game.board.configuration.pieces)) {
         let color = (value === value.toUpperCase()) ? 'w' : 'b';
         await createGamePiece(value, key, color);
     }
+    isBeingReset = false;
     await play();
 }
 
 
 async function play () {
-    await sleep(3000);
+    if(isBeingReset) return;
     const status = game.exportJson();
     if (!status.isFinished) {
         console.time('Calculated in');
@@ -101,10 +104,10 @@ async function play () {
 
         }
         let piece = getPieceAt(moveFrom);
-        await startAnimation(piece, moveFrom, moveTo);
         window.isAnimating = true;
+        await startAnimation(piece, moveFrom, moveTo);
         while(window.isAnimating) {
-            await sleep(1000);
+            await sleep(100);
         }
 
         piece.placeOnSquare(moveTo);
@@ -141,11 +144,15 @@ async function play () {
 
 
 async function waitForMove(status) {
-    let move = {};
+    // reset selected square
+    selectedSquare = undefined;
     // if it is a IA vs IA game or Human vs IA but it's the IA turn...
+    console.log("waitForMove: ", gameControl.gameType, status.turn, gameControl.gamePlayAs);
+
     if(gameControl.gameType === 0 ||
-        (gameControl.gameType === 1 && status.turn === 'black' && gameControl.gamePlayAs === 1) ||
-        (gameControl.gameType === 1 && status.turn === 'white' && gameControl.gamePlayAs === 0)) {
+        (gameControl.gameType === 1 && status.turn === 'black' && gameControl.gamePlayAs === 0) ||
+        (gameControl.gameType === 1 && status.turn === 'white' && gameControl.gamePlayAs === 1)) {
+        console.log("aiMove");
         return game.aiMove(status.turn === 'black' ? blackAiLevel : whiteAiLevel);
     } else {
         // it is a human turn!
@@ -153,26 +160,27 @@ async function waitForMove(status) {
         let fromSquare, toSquare;
         let validSel = false;
         while(!validSel) {
-            // first get selected piece - must be of the right color
-            while (selectedSquare === oldSelected || !(status.moves.includes(selectedSquare))) {
-                await sleep(200);
+            console.log(status.moves)
+            // first get selected piece - must be of the right color and it has to have the possibility to move
+            while (selectedSquare === oldSelected || status.moves[selectedSquare] === undefined) {
                 oldSelected = selectedSquare;
+                await sleep(200);
             }
+            oldSelected = selectedSquare;
             fromSquare = selectedSquare;
             let availableMoves = status.moves[fromSquare];
             console.log(availableMoves);
 
             while (selectedSquare === oldSelected) {
-                await sleep(200);
                 oldSelected = selectedSquare;
+                await sleep(200);
             }
             if(availableMoves.includes(selectedSquare)) {
                 toSquare = selectedSquare;
-                move[fromSquare] = toSquare;
                 validSel = true;
             }
         }
 
-        return move;
+        return game.move(fromSquare, toSquare);
     }
 }

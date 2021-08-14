@@ -105,7 +105,7 @@ async function startAnimation(piece, from, to) {
 
 function animation() {
     if (timer <= frames) {
-        let z = pieceToMove.getPosition()[2];
+        //let z = pieceToMove.getPosition()[2];
         pieceToMove.setPosition(moveFrom[0] + stepX * timer, yPos, moveFrom[2] + stepZ * timer);
         timer++;
     } else {
@@ -183,8 +183,8 @@ async function main() {
     boardGameObject.setTexture(gl, "../assets/models/newboard/Textures/Wood.bmp")
     boardGameObject.setYaw(45);
 
-    let testPawn = createPiece(gl, glProgram, await loadAndInitMesh(getModelPathFromPiece('p')), 'A0', 'w', 'p');
-    Scene.push(testPawn);
+    //let testPawn = createPiece(gl, glProgram, await loadAndInitMesh(getModelPathFromPiece('p')), 'A0', 'w', 'p');
+    //Scene.push(testPawn);
 
     Scene.push(boardGameObject);
     //tempArray.forEach(element => Scene.push(element));
@@ -227,12 +227,11 @@ async function main() {
         let ly = document.getElementById("ly").value;
         let lz = document.getElementById("lz").value;
 
-        let infoText = "Camera Position: " + cam_x_pos + " " + cam_y_pos + " " + cam_z_pos +
+        document.getElementById("info-box").innerText = "Camera Position: " + cam_x_pos + " " + cam_y_pos + " " + cam_z_pos +
             "" +
             "" +
             "" +
-            ""
-        document.getElementById("info-box").innerText = infoText;
+            "";
         document.getElementById("view_btn").innerText = VIEW
 
         //INIT CAMERA STUFF * ==========================================================================================================================================
@@ -272,7 +271,7 @@ async function main() {
             const intersection = raycast.linePlaneIntersection(boardPlane, cameraPosition, ray_wor);
             selectedSquare = getClosestSquare(intersection);
 
-            testPawn.setPosition(intersection[0], intersection[1], intersection[2]);
+            //testPawn.setPosition(intersection[0], intersection[1], intersection[2]);
             clickedState = false;
             console.log(selectedSquare);
         }
