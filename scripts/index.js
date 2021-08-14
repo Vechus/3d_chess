@@ -3,8 +3,8 @@ import {Game} from "./js-chess-engine.mjs";
 
 console.log("Hello Ale, Ali and Luca!")
 
-const whiteAiLevel = 0;
-const blackAiLevel = 0;
+let whiteAiLevel = 0;
+let blackAiLevel = 0;
 
 let game = new Game();
 
@@ -37,12 +37,20 @@ document.getElementById("startGameButton").onclick = async function () {
         gameControl.gameIALevel = 0;
     } else if(document.getElementById("optionIA1").checked) {
         gameControl.gameIALevel = 1;
+        whiteAiLevel = 1;
+        blackAiLevel = 1;
     } else if(document.getElementById("optionIA2").checked) {
         gameControl.gameIALevel = 2;
+        whiteAiLevel = 2;
+        blackAiLevel = 2;
     } else if(document.getElementById("optionIA3").checked) {
         gameControl.gameIALevel = 3;
+        whiteAiLevel = 3;
+        blackAiLevel = 3;
     } else if(document.getElementById("optionIA4").checked) {
         gameControl.gameIALevel = 4;
+        whiteAiLevel = 4;
+        blackAiLevel = 4;
     }
     if(document.getElementById("optionWhite").checked) {
         gameControl.gamePlayAs = 0;
