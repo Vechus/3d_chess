@@ -15,11 +15,14 @@ var stepX;
 var stepZ;
 const frames = 10;
 
-let VIEW
+let VIEW;
 
 var clipX = 0, clipY = 0;
 var pX = 0, pY = 0;
 var ray_nds = [0, 0, 0];
+var boardBounds = {x: [-6, 6], z: [-6, 6]};
+
+var selectedSquare = undefined;
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -33,6 +36,34 @@ async function createGamePiece(pieceName, coordinate, color) {
 
     let piece = createPiece(gl, glProgram, await loadAndInitMesh(getModelPathFromPiece(pieceName)), coordinate, color, pieceName);
     Scene.push(piece);
+}
+
+function getClosestSquare(planeCoordinate) {
+    // if the click is out of bounds return undefined
+    if(planeCoordinate[0] < boardBounds.x[0] || planeCoordinate[0] > boardBounds.x[1] ||
+    planeCoordinate[2] < boardBounds.z[0] || planeCoordinate[2] > boardBounds.z[1]) {
+        return undefined;
+    }
+    let closestX = coorColumnsMap.get('A'), closestY = coorRowsMap.get('1');
+    for (let item of coorColumnsMap.values()) {
+        if(Math.abs(item - planeCoordinate[0]) < Math.abs(closestX - planeCoordinate[0])) {
+            closestX = item;
+        }
+    }
+    for (let item of coorRowsMap.values()) {
+        if(Math.abs(item - planeCoordinate[2]) < Math.abs(closestY - planeCoordinate[2])) {
+            closestY = item;
+        }
+    }
+    let closestSquare = '';
+    coorColumnsMap.forEach(function (value, key) {
+        if(value === closestX) closestSquare += key;
+    });
+    coorRowsMap.forEach(function (value, key) {
+        if(value === closestY) closestSquare += key;
+    });
+
+    return closestSquare;
 }
 
 document.getElementById("view_btn").onclick = function () {
@@ -76,7 +107,7 @@ async function startAnimation(piece, from, to) {
 
 function animation() {
     if (timer <= frames) {
-        let z = pieceToMove.getPosition()[2];
+        //let z = pieceToMove.getPosition()[2];
         pieceToMove.setPosition(moveFrom[0] + stepX * timer, yPos, moveFrom[2] + stepZ * timer);
         timer++;
     } else {
@@ -154,8 +185,8 @@ async function main() {
     boardGameObject.setTexture(gl, "../assets/models/newboard/Textures/Wood.bmp")
     boardGameObject.setYaw(45);
 
-    let testPawn = createPiece(gl, glProgram, await loadAndInitMesh(getModelPathFromPiece('p')), 'A0', 'w', 'p');
-    Scene.push(testPawn);
+    //let testPawn = createPiece(gl, glProgram, await loadAndInitMesh(getModelPathFromPiece('p')), 'A0', 'w', 'p');
+    //Scene.push(testPawn);
 
     Scene.push(boardGameObject);
     //tempArray.forEach(element => Scene.push(element));
@@ -180,6 +211,7 @@ async function main() {
     //==========================================================================================================================================
     //* ==========================================================================================================================================
 
+    let clickedState = false;
     function render(time) {
         time *= 0.001;  // convert to seconds
 
@@ -197,12 +229,11 @@ async function main() {
         let ly = document.getElementById("ly").value;
         let lz = document.getElementById("lz").value;
 
-        let infoText = "Camera Position: " + cam_x_pos + " " + cam_y_pos + " " + cam_z_pos +
+        document.getElementById("info-box").innerText = "Camera Position: " + cam_x_pos + " " + cam_y_pos + " " + cam_z_pos +
             "" +
             "" +
             "" +
-            ""
-        document.getElementById("info-box").innerText = infoText;
+            "";
         document.getElementById("view_btn").innerText = VIEW
 
         //INIT CAMERA STUFF * ==========================================================================================================================================
@@ -224,27 +255,28 @@ async function main() {
         //* ==========================================================================================================================================
 
         // raycasting transformations: from pixel to position
-        let projectionView = utils.multiplyMatrices(projectionMatrix, viewMatrix);
-        let invProjView = utils.invertMatrix(projectionView);
-        let rect = canvas.getBoundingClientRect();
-        let viewPort = [rect.x, rect.y, rect.width, rect.height];
-        let ray = [];
-        raycast.unproject(ray, [pX, pY, 0], viewPort, invProjView);
-        // last temptative
-        let ray_clip = [ray_nds[0], ray_nds[1], -1, 1];
-        let ray_eye = utils.multiplyMatrixVector(m4.inverse(projectionMatrix), ray_clip);
-        ray_eye = [ ray_eye[0], ray_eye[1], -1, 0 ];
-        let ray_wor = utils.multiplyMatrixVector(utils.invertMatrix(viewMatrix), ray_eye).slice(0, 3);
-        utils.normalize(ray_wor, ray_wor);
+        if(clickedState) {
+            let projectionView = utils.multiplyMatrices(projectionMatrix, viewMatrix);
+            let invProjView = utils.invertMatrix(projectionView);
+            let rect = canvas.getBoundingClientRect();
+            let viewPort = [rect.x, rect.y, rect.width, rect.height];
+            let ray = [];
+            raycast.unproject(ray, [pX, pY, 0], viewPort, invProjView);
+            // last temptative
+            let ray_clip = [ray_nds[0], ray_nds[1], -1, 1];
+            let ray_eye = utils.multiplyMatrixVector(m4.inverse(projectionMatrix), ray_clip);
+            ray_eye = [ray_eye[0], ray_eye[1], -1, 0];
+            let ray_wor = utils.multiplyMatrixVector(utils.invertMatrix(viewMatrix), ray_eye).slice(0, 3);
+            utils.normalize(ray_wor, ray_wor);
 
-        // coordinate on the board plane
-        const intersection = raycast.linePlaneIntersection(boardPlane, cameraPosition, ray_wor);
+            // coordinate on the board plane
+            const intersection = raycast.linePlaneIntersection(boardPlane, cameraPosition, ray_wor);
+            selectedSquare = getClosestSquare(intersection);
 
-        testPawn.setPosition(intersection[0], intersection[1], intersection[2]);
-
-        document.getElementById("start").innerHTML = `s: ${cameraPosition}`;
-        document.getElementById("end").innerHTML = `e: ${ray_wor}`;
-        document.getElementById("inters").innerHTML = `i: ${intersection}`;
+            //testPawn.setPosition(intersection[0], intersection[1], intersection[2]);
+            clickedState = false;
+            console.log(selectedSquare);
+        }
 
         //animation
         if (window.isAnimating) animation();
@@ -277,7 +309,7 @@ async function main() {
         })
         requestAnimationFrame(render);
     }
-    gl.canvas.addEventListener('mousemove', (e) => {
+    gl.canvas.addEventListener('mousedown', (e) => {
         const canvas = gl.canvas;
         const rect = canvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
@@ -288,8 +320,7 @@ async function main() {
         clipX = x / rect.width * 2 - 1;
         clipY = 1 - y / rect.height * 2;
         ray_nds = [clipX, clipY, 1];
-        document.getElementById("clipX").innerHTML = `clipX: ${clipX}`;
-        document.getElementById("clipY").innerHTML = `clipY: ${clipY}`;
+        clickedState = true;
     });
     requestAnimationFrame(render);
 }
