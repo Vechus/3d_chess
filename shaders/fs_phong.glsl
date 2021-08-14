@@ -16,6 +16,7 @@ uniform vec4 lightColor;
 uniform vec4 ambientLight;
 
 uniform sampler2D u_texture;
+uniform bool hasTexture;
 
 out vec4 outColor;
 
@@ -37,5 +38,12 @@ void main() {
     vec4 diffContrA = diffColor  * dot(lightDirectionVector, normal) * lightColor;
     vec4 diffuse = diffContrA;
     //with EMISSION (emit)
-    outColor = clamp( (ambientCo + phongSpecular + diffuse + emit) * texture(u_texture, uvFS), 0.0, 1.0);
+
+    vec4 preOut = (ambientCo + phongSpecular + diffuse + emit);
+    if(hasTexture == true) {
+        preOut = preOut * texture(u_texture, uvFS); //todo at least nmap
+    }
+
+
+    outColor = clamp( preOut, 0.0, 1.0);
 }

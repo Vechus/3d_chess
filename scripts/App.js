@@ -202,7 +202,8 @@ async function main() {
     //* ==========================================================================================================================================
 
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-    gl.clearColor(0.86, 0.86, 0.86, 1);
+    let COLOR_OF_THE_UNIVERSE = [0.0, 0.0, 0.0, 0.0]
+    gl.clearColor(COLOR_OF_THE_UNIVERSE[0],COLOR_OF_THE_UNIVERSE[1],COLOR_OF_THE_UNIVERSE[2],COLOR_OF_THE_UNIVERSE[3]);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.enable(gl.DEPTH_TEST);
     gl.enable(gl.CULL_FACE);
@@ -239,7 +240,7 @@ async function main() {
         //INIT CAMERA STUFF * ==========================================================================================================================================
         //* ==========================================================================================================================================
 
-        gl.clearColor(0.0, 0.86, 0.0, 1); //clear the buffers with this color a.k.a. green screen
+        gl.clearColor(COLOR_OF_THE_UNIVERSE[0],COLOR_OF_THE_UNIVERSE[1],COLOR_OF_THE_UNIVERSE[2],COLOR_OF_THE_UNIVERSE[3]);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         let aspect = gl.canvas.width / gl.canvas.height;
 

@@ -37,6 +37,9 @@ class GameObject {
         this.color = [1.0, 1.0, 1.0, 1.0]
         this.scale = 1.0;
 
+        this.hasTexture = false;
+        this._texture = undefined;
+
         this.mesh = mesh;
 
         this.children = []; //nesting and scene graph
@@ -142,6 +145,7 @@ class GameObject {
             gl.generateMipmap(gl.TEXTURE_2D);
         };
         this._texture = texture
+        this.hasTexture = true;
     }
     render(gl, projectionMatrix, viewMatrix, lightDirection) {
 
@@ -210,12 +214,15 @@ class GameObject {
         let fsAmbientLight = gl.getUniformLocation(glProgram, 'ambientLight');
         gl.uniform4fv(fsAmbientLight, ambientLightV4);
 
+        gl.uniform1i(gl.getUniformLocation(glProgram,"hasTexture"), 0);
 
         //Textures
-        if (this._activeTexture !== undefined) {
+        if (this.hasTexture) {
+            //tell the fragment shader that a texture exists
+            gl.uniform1i(gl.getUniformLocation(glProgram,"hasTexture"), 1);
             let textLocation = gl.getUniformLocation(glProgram, "u_texture");
             gl.activeTexture(gl.TEXTURE0);
-            gl.bindTexture(gl.TEXTURE_2D, this._activeTexture._texture);
+            gl.bindTexture(gl.TEXTURE_2D, this._texture);
             gl.uniform1i(textLocation, 0);
         }
 
@@ -246,15 +253,5 @@ class PhongShader {
         this.ambColorV4 = ambColorV4;
         this.specularColorV4 = specularColorV4;
         this.emitV4 = emitV4;
-    }
-}
-
-class Texture {
-
-    constructor(gl, imageUrl) {
-
-
-
-        this._texture = texture;
     }
 }
