@@ -179,10 +179,10 @@ async function main() {
         p2: [1, 0.7, -1]
     };
 
-    let boardGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/newboard/BoardTop.obj'));
+    let boardGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/newboard/AleBoard.obj'));
     boardGameObject.setPosition(0, 0, 0);
     boardGameObject.setName("board")
-    boardGameObject.setTexture(gl, "../assets/models/newboard/Textures/Wood.bmp")
+    boardGameObject.setTexture(gl, "../assets/models/newboard/Textures/Chess_Board.png")
     boardGameObject.setYaw(45);
 
     //let testPawn = createPiece(gl, glProgram, await loadAndInitMesh(getModelPathFromPiece('p')), 'A0', 'w', 'p');
