@@ -28,6 +28,7 @@ void main() {
     vec4 ambientCo = ambientLight * ambColor;
 
     vec3 eyeDirNorm = normalize(eyedirVec);
+
     // PHONG SPECULAR //
     vec3 reflA = -reflect(lightDirectionVector, normal);
     float LRA = max(dot(reflA, eyeDirNorm), 0.0);

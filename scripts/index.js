@@ -24,7 +24,8 @@ document.getElementById("startGameButton").onclick = async function () {
     window.isAnimating = false;
     isBeingReset = true;
 
-    Scene = Scene.slice(0, 1);
+    //deletes all model except the board
+    Scene = Scene.slice(0, 2);
     game = new Game();
     if(document.getElementById("optionIAvIA").checked) {
         gameControl.gameType = 0;

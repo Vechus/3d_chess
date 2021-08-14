@@ -179,18 +179,26 @@ async function main() {
         p2: [1, 0.7, -1]
     };
 
-    let boardGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/newboard/AleBoard.obj'));
-    boardGameObject.setPosition(0, 0, 0);
-    boardGameObject.setName("board")
-    boardGameObject.setTexture(gl, "../assets/models/newboard/Textures/Chess_Board.png")
-    boardGameObject.setYaw(45);
+    async function spawnBoards() {
+        //Squared board top (Black and white)
+        let boardGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/newboard/AleBoard.obj'));
+        boardGameObject.setPosition(0, 0, 0.0);
 
-    //let testPawn = createPiece(gl, glProgram, await loadAndInitMesh(getModelPathFromPiece('p')), 'A0', 'w', 'p');
-    //Scene.push(testPawn);
+        boardGameObject.setName("board")
+        boardGameObject.setTexture(gl, "../assets/models/newboard/Textures/Chess_Board.png")
+        boardGameObject.setYaw(45);
+        Scene.push(boardGameObject);
 
-    Scene.push(boardGameObject);
-    //tempArray.forEach(element => Scene.push(element));
-    //Scene.push(boardGameObject, bishopGameObject, kingGameObject, knightGameObject, queenGameObject, rookGameObject);
+        let boardFrameGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/newboard/BoardFrame.obj'));
+        boardFrameGameObject.setPosition(0, 0, 0);
+        boardFrameGameObject.setName("board-frame")
+        boardFrameGameObject.setTexture(gl, "../assets/models/newboard/Textures/Wood.bmp")
+        boardFrameGameObject.setYaw(45);
+        Scene.push(boardFrameGameObject);
+    }
+
+    await spawnBoards();
+
 
     VIEW = pickNextView();
 
