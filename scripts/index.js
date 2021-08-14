@@ -24,7 +24,6 @@ document.getElementById("startGameButton").onclick = async function () {
     window.isAnimating = false;
     isBeingReset = true;
 
-    // TODO slice to 1 when unmounting raycast test
     Scene = Scene.slice(0, 1);
     game = new Game();
     if(document.getElementById("optionIAvIA").checked) {
