@@ -264,13 +264,6 @@ async function main() {
 
         // raycasting transformations: from pixel to position
         if(clickedState) {
-            let projectionView = utils.multiplyMatrices(projectionMatrix, viewMatrix);
-            let invProjView = utils.invertMatrix(projectionView);
-            let rect = canvas.getBoundingClientRect();
-            let viewPort = [rect.x, rect.y, rect.width, rect.height];
-            let ray = [];
-            raycast.unproject(ray, [pX, pY, 0], viewPort, invProjView);
-            // last temptative
             let ray_clip = [ray_nds[0], ray_nds[1], -1, 1];
             let ray_eye = utils.multiplyMatrixVector(m4.inverse(projectionMatrix), ray_clip);
             ray_eye = [ray_eye[0], ray_eye[1], -1, 0];
