@@ -2,7 +2,6 @@ import {Game} from "./js-chess-engine.mjs";
 
 
 console.log("Hello Ale, Ali and Luca!")
-
 let whiteAiLevel = 0;
 let blackAiLevel = 0;
 
@@ -125,6 +124,43 @@ async function play () {
             }
         }
         piece.placeOnSquare(moveTo);
+        //check for promotion
+        if((piece.getPiece() === 'P' || piece.getPiece() === 'p') &&
+            (moveTo.split('')[1] === '1' || moveTo.split('')[1] === '8')) {
+            if(gameControl.gameType === 0 ||
+                (gameControl.gameType === 1 && status.turn === 'black' && gameControl.gamePlayAs === 0) ||
+                (gameControl.gameType === 1 && status.turn === 'white' && gameControl.gamePlayAs === 1)) {
+                //hey, it is an AI move! This guy always promotes to queen LOL
+                for(let i = 0; i < Scene.length; i++) {
+                    if(Scene[i] === piece) {
+                        Scene.splice(i, 1); //remove the pawn
+                    }
+                }
+                if(status.turn === 'white')
+                    Scene.push(new GameObject(gl, glProgram, await loadAndInitMesh(getModelPathFromPiece('Q'))));
+                else
+                    Scene.push(new GameObject(gl, glProgram, await loadAndInitMesh(getModelPathFromPiece('q'))));
+            }
+            else {
+                //this is a human move
+                //display the modal for the promotion
+                window.isPromoting = true;
+                await $('#promotionModal').modal('show');
+                for(let i = 0; i < Scene.length; i++) {
+                    if(Scene[i] === piece) {
+                        Scene.splice(i, 1); //remove the pawn
+                    }
+                }
+                while(window.isPromoting) { //wait for user choice
+                    await sleep(200);
+                }
+                window.isPromoting = true;
+                await promote(moveTo, status.turn);  //wait for the piece to be added in Scene
+                while(window.isPromoting) {
+                    await sleep(200);
+                }
+            }
+        }
         // check castling
         let rookSquare;
         let rook;
@@ -167,6 +203,7 @@ async function play () {
         console.timeEnd('Calculated in');
         await play();
     } else {
+        alert("Checkmate! " + status.turn + " loses. YOU ARE A LOSER");
         console.log(`${status.turn} is in ${status.checkMate ? 'checkmate' : 'draw'}`);
     }
 }

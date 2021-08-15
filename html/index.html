@@ -17,6 +17,7 @@
     <script type="module" src="../scripts/js-chess-engine.mjs"></script>
     <script type='text/javascript' >
         window.isAnimating = false;
+        window.isPromoting = false;
     </script>
     <script type="module" src="../scripts/index.js"></script>
 
@@ -156,12 +157,62 @@
             </div>
         </div>
     </div>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-promotion-modal-lg">Large modal</button>
+
 
     <footer class="mastfoot mt-auto">
         <div class="inner">
             <p>© Luca Vecchio, Alessandro Lisi, Alice Piemonti</p>
         </div>
     </footer>
+</div>
+<div id = "promotionModal" class="modal fade bd-promotion-modal-lg" tabindex="-1" role="dialog" aria-labelledby="promotionModal" aria-hidden="true" style="color:black !important">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Promotion</h5>
+            </div>
+            <div class="modal-body">
+                <p> Select a piece for the promotion: </p>
+
+                <div class="row">
+                    <div class="col-sm-3"
+                         onclick="setPromotingPiece('Q')">
+                        <div class="card" style="width: fit-content; width: -moz-fit-content">
+                            <img class="card-img-top" src="../assets/images/queen.jfif" alt="Card image cap">
+                            <div class="card-body">
+                                <p class="card-text">Queen</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3" onclick="setPromotingPiece('R')">
+                        <div class="card" style="width: fit-content; width: -moz-fit-content">
+                            <img class="card-img-top" src="../assets/images/rook.jfif" alt="Card image cap">
+                            <div class="card-body">
+                                <p class="card-text">Rook</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3" onclick="setPromotingPiece('B')">
+                        <div class="card" style="width: fit-content; width: -moz-fit-content">
+                            <img class="card-img-top" src="../assets/images/bishop.jpg" alt="Card image cap">
+                            <div class="card-body">
+                                <p class="card-text">Bishop</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3" onclick="setPromotingPiece('N')">
+                        <div class="card" style="width: fit-content; width: -moz-fit-content">
+                            <img class="card-img-top" src="../assets/images/knight.jfif" alt="Card image cap">
+                            <div class="card-body">
+                                <p class="card-text">Knight</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 </body>
@@ -170,5 +221,6 @@
 <script type="text/javascript" src="../scripts/App.js" ></script>
 <script type="text/javascript" src="../scripts/Classes.js" ></script>
 <script type="text/javascript" src="../scripts/Camera.js" ></script>
+<script type="text/javascript" src="../scripts/promotion.js" ></script>
 </html>
 

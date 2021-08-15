@@ -107,7 +107,6 @@ async function startAnimation(piece, from, to) {
 
 function animation() {
     if (timer <= frames) {
-        //let z = pieceToMove.getPosition()[2];
         pieceToMove.setPosition(moveFrom[0] + stepX * timer, yPos, moveFrom[2] + stepZ * timer);
         timer++;
     } else {
