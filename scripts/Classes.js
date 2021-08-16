@@ -133,7 +133,7 @@ class GameObject {
     setTexture(gl, textureUri, normalMapUri) {
 
 
-        //TEXTURE
+        //TEXTURE (Unit = 0) ========================================================
 
         let texture = gl.createTexture()
         // use texture unit 0
@@ -157,19 +157,19 @@ class GameObject {
         };
         this._texture = texture
 
-        //NORMAL MAP
+        //NORMAL MAP  (Unit=1) ========================================================
 
         let normalMapTexture = gl.createTexture()
         // use texture unit 1
-        gl.activeTexture(gl.TEXTURE0);
+        gl.activeTexture(gl.TEXTURE1);
         // bind to the TEXTURE_2D bind point of texture unit 0
         gl.bindTexture(gl.TEXTURE_2D, normalMapTexture);
 
         let imageNormalMap = new Image()
-        imageNormalMap.src = textureUri
+        imageNormalMap.src = normalMapUri
         imageNormalMap.onload = function () {
             //Make sure this is the active one
-            gl.activeTexture(gl.TEXTURE0);
+            gl.activeTexture(gl.TEXTURE1);
             gl.bindTexture(gl.TEXTURE_2D, normalMapTexture);
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, imageNormalMap);
@@ -264,9 +264,9 @@ class GameObject {
             gl.uniform1i(textLocation, 0);
 
             let nmapTextLocation = gl.getUniformLocation(glProgram, "u_normalMap");
-            gl.activeTexture(gl.TEXTURE0);
+            gl.activeTexture(gl.TEXTURE1);
             gl.bindTexture(gl.TEXTURE_2D, this._textureNormalMap);
-            gl.uniform1i(nmapTextLocation, 0);
+            gl.uniform1i(nmapTextLocation, 1); //texture unit 1
 
 
         }
