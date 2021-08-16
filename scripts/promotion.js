@@ -8,7 +8,6 @@ async function promote(square, turn) {
     else color = 'w';
     let object = createPiece(gl, glProgram, await loadAndInitMesh(getModelPathFromPiece(piece)), square, color, piece);
     Scene.push(object);
-    console.log("1"+ piece + "2"+ turn)
     window.isPromoting = false;
 }
 

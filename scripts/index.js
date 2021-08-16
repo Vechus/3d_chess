@@ -158,10 +158,12 @@ async function play () {
                         Scene.splice(i, 1); //remove the pawn
                     }
                 }
+                let promotedObject;
                 if(status.turn === 'white')
-                    Scene.push(new GameObject(gl, glProgram, await loadAndInitMesh(getModelPathFromPiece('Q'))));
+                    promotedObject = createPiece(gl, glProgram, await loadAndInitMesh(getModelPathFromPiece('Q')), moveTo, 'w', 'Q');
                 else
-                    Scene.push(new GameObject(gl, glProgram, await loadAndInitMesh(getModelPathFromPiece('q'))));
+                    promotedObject = createPiece(gl, glProgram, await loadAndInitMesh(getModelPathFromPiece('q')), moveTo, 'b', 'q');
+                Scene.push(promotedObject);
             }
             else {
                 //this is a human move
