@@ -10,7 +10,6 @@ in vec2 a_uv;
 
 out vec3 fsNormal;
 out vec3 fsPosition;
-
 out vec2 uvFS;
 
 uniform mat4 u_projection;

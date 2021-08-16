@@ -180,7 +180,7 @@ class GameObject {
         gl.drawElements(gl.TRIANGLES, this.mesh.indices.length, gl.UNSIGNED_SHORT, 0);
     } */
 
-    renderPhong(gl, projectionMatrix, viewMatrix, phongShader, eyeDirectionV3, lightDirectionV3, lightColorV4, ambientLightV4) {
+    renderPhong(gl, projectionMatrix, viewMatrix, phongShader, eyePosition, lightDirectionV3, lightColorV4, ambientLightV4) {
 
         //Vertex Shader
         let vsView = gl.getUniformLocation(glProgram, "u_view");
@@ -213,8 +213,8 @@ class GameObject {
         let fsEmit4 = gl.getUniformLocation(glProgram, 'emit');
         gl.uniform4fv(fsEmit4, phongShader.emitV4);
 
-        let fsEyeDirection3 = gl.getUniformLocation(glProgram, 'eyedirVec');
-        gl.uniform3fv(fsEyeDirection3, eyeDirectionV3);
+        let fsEyeDirection3 = gl.getUniformLocation(glProgram, 'eyePosition');
+        gl.uniform3fv(fsEyeDirection3, eyePosition);
 
         let fsLightDirection3 = gl.getUniformLocation(glProgram, 'lightDirectionVector');
         gl.uniform3fv(fsLightDirection3, lightDirectionV3);
