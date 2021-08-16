@@ -127,6 +127,9 @@ class GameObject {
         );
     }
 
+    #computeNormalMatrix(worldMatrix) {
+        return utils.invertMatrix(utils.transposeMatrix(worldMatrix));
+    }
     setTexture(gl, textureUri) {
         let texture = gl.createTexture()
         // use texture unit 0
@@ -151,6 +154,7 @@ class GameObject {
         this._texture = texture
         this.hasTexture = true;
     }
+    /*
     render(gl, projectionMatrix, viewMatrix, lightDirection) {
 
         let fsDiffuseColor4 = gl.getUniformLocation(glProgram, 'u_diffuse');
@@ -162,7 +166,6 @@ class GameObject {
         let vsWorld = gl.getUniformLocation(glProgram, 'u_world');
 
         //==========================================================================================================================
-        // compute the world matrix for (in this case) the queen
         let u_world = this.#computeWorldMatrix();
 
         gl.uniformMatrix4fv(vsProjection, false, utils.transposeMatrix(projectionMatrix));
@@ -175,7 +178,7 @@ class GameObject {
         gl.uniform3fv(fsLightDirection3, lightDirection);
 
         gl.drawElements(gl.TRIANGLES, this.mesh.indices.length, gl.UNSIGNED_SHORT, 0);
-    }
+    } */
 
     renderPhong(gl, projectionMatrix, viewMatrix, phongShader, eyeDirectionV3, lightDirectionV3, lightColorV4, ambientLightV4) {
 
@@ -183,11 +186,15 @@ class GameObject {
         let vsView = gl.getUniformLocation(glProgram, "u_view");
         let vsProjection = gl.getUniformLocation(glProgram, 'u_projection');
         let vsWorld = gl.getUniformLocation(glProgram, 'u_world');
+        let vsNormalMatrix = gl.getUniformLocation(glProgram, 'u_nMatrix');
 
         let u_world = this.#computeWorldMatrix();
+        let u_normalMatrix = this.#computeNormalMatrix(u_world);
+
         gl.uniformMatrix4fv(vsProjection, false, utils.transposeMatrix(projectionMatrix));
         gl.uniformMatrix4fv(vsView, false, utils.transposeMatrix(viewMatrix));
         gl.uniformMatrix4fv(vsWorld, false, utils.transposeMatrix(u_world));
+        gl.uniformMatrix4fv(vsNormalMatrix, false, utils.transposeMatrix(u_normalMatrix));
 
         //Fragment Shader
 
