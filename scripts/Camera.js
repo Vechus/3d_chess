@@ -1,10 +1,58 @@
-const viewOrder = new Map([[0, "DEFAULT"],[1, "WHITE"],[2, "BLACK"],[3, "TOP"]])
+const viewOrder = new Map([[0, "WHITE"],[1, "BLACK"],[2, "TOP"]])
 const views = new Map([
-    ['DEFAULT', [0, 6, 12]],
     ['WHITE', [0, 11, 7]],
     ['BLACK', [0, 11, -7]],
-    ['TOP', [0, 12, 0]]
+    ['TOP', [0.001, 12, 0]]
 ]);
+
+const CAMERA_TOP_OMEGA = 80;
+const CAMERA_BOTTOM_OMEGA = 10;
+const CAMERA_SPHERE_RADIUS = 14;
+
+var keysPressed = {};
+
+
+function disableScroll() {
+    document.body.classList.add("stop-scrolling");
+}
+
+function enableScroll() {
+    document.body.classList.remove("stop-scrolling");
+}
+
+document.addEventListener('keydown', (e) => {
+    keysPressed[e.key.toUpperCase()] = true;
+    disableScroll();
+});
+
+document.addEventListener('keyup', (e) => {
+    delete keysPressed[e.key.toUpperCase()];
+    if(Object.keys(keysPressed).length === 0) enableScroll();
+});
+
+function computeCameraDiff() {
+    camera_diff.x = 0;
+    camera_diff.y = 0;
+    for(const keyPressed of Object.keys(keysPressed)) {
+        // use both WASD and arrow keys
+        if (keyPressed === 'W' || keyPressed === 'ARROWUP') {
+            // go up with camera
+            camera_diff.y = -1;
+        }
+        if (keyPressed === 'A' || keyPressed === "ARROWLEFT") {
+            // go left with camera
+            camera_diff.x = 1;
+        }
+        if (keyPressed === 'S' || keyPressed === "ARROWDOWN") {
+            // go down with camera
+            camera_diff.y = 1;
+        }
+        if (keyPressed === 'D' || keyPressed === "ARROWRIGHT") {
+            // go right with camera
+            camera_diff.x = -1;
+        }
+    }
+}
 
 let currentIndex = 0;
 function pickNextView() {

@@ -18,9 +18,13 @@ const frames = 10;
 let VIEW;
 
 var clipX = 0, clipY = 0;
-var pX = 0, pY = 0;
 var ray_nds = [0, 0, 0];
 var boardBounds = {x: [-6, 6], z: [-6, 6]};
+
+// camera diff vector: updated at event keydown/up and read at each frame
+var camera_diff = { x: 0, y: 0};
+// camera angles
+var camera_angles = { phi: 60, omega: 0 };
 
 var selectedSquare = undefined;
 
@@ -225,15 +229,15 @@ async function main() {
     function render(time) {
         time *= 0.001;  // convert to seconds
 
-        //const INPUT_SCALE = 1;
+        computeCameraDiff();
+        camera_angles.phi += camera_diff.x;
+        camera_angles.omega += camera_diff.y;
+        if(camera_angles.omega < CAMERA_BOTTOM_OMEGA) camera_angles.omega = CAMERA_BOTTOM_OMEGA;
+        if(camera_angles.omega > CAMERA_TOP_OMEGA) camera_angles.omega = CAMERA_TOP_OMEGA;
 
-        //let cam_x_pos = document.getElementById("cxpos").value / INPUT_SCALE;
-        //let cam_y_pos = document.getElementById("cypos").value / INPUT_SCALE;
-        //let cam_z_pos = document.getElementById("czpos").value / INPUT_SCALE;
-
-        let cam_x_pos = views.get(VIEW)[0]
-        let cam_y_pos = views.get(VIEW)[1]
-        let cam_z_pos = views.get(VIEW)[2]
+        let cam_x_pos = CAMERA_SPHERE_RADIUS * Math.sin(utils.degToRad(camera_angles.omega)) * Math.cos(utils.degToRad(camera_angles.phi));
+        let cam_z_pos = CAMERA_SPHERE_RADIUS * Math.sin(utils.degToRad(camera_angles.omega)) * Math.sin(utils.degToRad(camera_angles.phi));
+        let cam_y_pos = CAMERA_SPHERE_RADIUS * Math.cos(utils.degToRad(camera_angles.omega));
 
         let lx = document.getElementById("lx").value;
         let ly = document.getElementById("ly").value;
@@ -318,8 +322,6 @@ async function main() {
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
 
-        pX = x;
-        pY = y;
         clipX = x / rect.width * 2 - 1;
         clipY = 1 - y / rect.height * 2;
         ray_nds = [clipX, clipY, 1];
