@@ -24,7 +24,7 @@ var boardBounds = {x: [-6, 6], z: [-6, 6]};
 // camera diff vector: updated at event keydown/up and read at each frame
 var camera_diff = { x: 0, y: 0};
 // camera angles
-var camera_angles = { phi: 60, omega: 0 };
+var camera_angles = { phi: 90, omega: 30 };
 
 var selectedSquare = undefined;
 
@@ -71,7 +71,8 @@ function getClosestSquare(planeCoordinate) {
 }
 
 document.getElementById("view_btn").onclick = function () {
-    VIEW = pickNextView()
+    VIEW = pickNextView();
+    camera_angles = views.get(VIEW);
 }
 
 function getPieceAt(square) {
@@ -248,7 +249,7 @@ async function main() {
             "" +
             "" +
             "";
-        document.getElementById("view_btn").innerText = VIEW
+        document.getElementById("view_btn").innerText = VIEW;
 
         //INIT CAMERA STUFF * ==========================================================================================================================================
         //* ==========================================================================================================================================

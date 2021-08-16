@@ -1,8 +1,8 @@
 const viewOrder = new Map([[0, "WHITE"],[1, "BLACK"],[2, "TOP"]])
 const views = new Map([
-    ['WHITE', [0, 11, 7]],
-    ['BLACK', [0, 11, -7]],
-    ['TOP', [0.001, 12, 0]]
+    ['WHITE', {phi: 90, omega: 30}],
+    ['BLACK', {phi: -90, omega: 30}],
+    ['TOP', {phi: 90, omega: 0}]
 ]);
 
 const CAMERA_TOP_OMEGA = 80;
@@ -66,9 +66,9 @@ function computeCameraDiff() {
 
 let currentIndex = 0;
 function pickNextView() {
-    return viewOrder.get(currentIndex++ % 4)
+    return viewOrder.get(currentIndex++ % 3);
 }
 
 function pickView(n) {
-    return viewOrder.get(n % 4);
+    return viewOrder.get(n % 3);
 }
