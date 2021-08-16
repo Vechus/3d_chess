@@ -191,8 +191,8 @@ async function main() {
         boardGameObject.setPosition(0, 0, 0);
 
         boardGameObject.setName("board")
-        boardGameObject.setTexture(gl, "../assets/models/newboard/Textures/Chess_Board.png",
-            "../assets/models/newboard/Textures/Chess_Board_NormalMap.png")
+        boardGameObject.setTexture(gl, "../assets/models/newboard/Textures/512-chess-bw-diffuse.jpeg",
+            "../assets/models/newboard/Textures/512-chess-bw-nmap.jpeg")
         boardGameObject.setYaw(45);
         boardGameObject.setScale(1.02);
         Scene.push(boardGameObject);
