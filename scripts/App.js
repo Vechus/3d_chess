@@ -26,6 +26,8 @@ var camera_diff = { x: 0, y: 0};
 // camera angles
 var camera_angles = { phi: 0, omega: 30 };
 
+var camera_depth = 1;
+
 var selectedSquare = undefined;
 
 function sleep(ms) {
@@ -235,10 +237,10 @@ async function main() {
         camera_angles.omega += camera_diff.y;
         if(camera_angles.omega < CAMERA_BOTTOM_OMEGA) camera_angles.omega = CAMERA_BOTTOM_OMEGA;
         if(camera_angles.omega > CAMERA_TOP_OMEGA) camera_angles.omega = CAMERA_TOP_OMEGA;
-
-        let cam_x_pos = CAMERA_SPHERE_RADIUS * Math.sin(utils.degToRad(camera_angles.omega)) * Math.cos(utils.degToRad(camera_angles.phi));
-        let cam_z_pos = CAMERA_SPHERE_RADIUS * Math.sin(utils.degToRad(camera_angles.omega)) * Math.sin(utils.degToRad(camera_angles.phi));
-        let cam_y_pos = CAMERA_SPHERE_RADIUS * Math.cos(utils.degToRad(camera_angles.omega));
+        radius = CAMERA_SPHERE_RADIUS/camera_depth;
+        let cam_x_pos = radius * Math.sin(utils.degToRad(camera_angles.omega)) * Math.cos(utils.degToRad(camera_angles.phi));
+        let cam_z_pos = radius * Math.sin(utils.degToRad(camera_angles.omega)) * Math.sin(utils.degToRad(camera_angles.phi));
+        let cam_y_pos = radius * Math.cos(utils.degToRad(camera_angles.omega));
 
         let lx = document.getElementById("lx").value;
         let ly = document.getElementById("ly").value;

@@ -8,6 +8,8 @@ const views = new Map([
 const CAMERA_TOP_OMEGA = 80;
 const CAMERA_BOTTOM_OMEGA = 10;
 const CAMERA_SPHERE_RADIUS = 14;
+const MAX_DEPTH = 4.5;
+const MIN_DEPTH = 0.5;
 
 var keysPressed = {};
 
@@ -60,6 +62,18 @@ function computeCameraDiff() {
         if (keyPressed === 'D' || keyPressed === "ARROWRIGHT") {
             // go right with camera
             camera_diff.x = -1;
+        }
+        if (keyPressed === 'Z') {
+            //zoom in
+            if(camera_depth < MAX_DEPTH) {
+                camera_depth += 0.05;
+            }
+        }
+        if(keyPressed === 'X') {
+            //zoom out
+            if(camera_depth > MIN_DEPTH) {
+                camera_depth += -0.05;
+            }
         }
     }
 }
