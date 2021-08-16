@@ -1,4 +1,5 @@
 import {Game} from "./js-chess-engine.mjs";
+import {downByColor} from "./const/board.mjs";
 
 
 console.log("Hello Ale, Ali and Luca!")
@@ -11,6 +12,8 @@ var outWhite = 0;
 var outBlack = 0;
 let isBeingReset = false;
 
+var enPassant;
+
 // describes the control state at the start of the game
 let gameControl = {
     gameType: 0,
@@ -21,6 +24,8 @@ let gameControl = {
 document.getElementById("startGameButton").onclick = async function () {
     // app.js gets killed if restarting the game during animation
     window.isAnimating = false;
+    outWhite = 0;
+    outBlack = 0;
     isBeingReset = true;
 
     //deletes all model except the board
@@ -99,15 +104,31 @@ async function play () {
         let moveTo =  Object.values(move)[0];
         let object = getPieceAt(moveTo);
         let piece = getPieceAt(moveFrom);
+        //move the piece
         await startAnimation(piece, getPositionFromSquare(moveFrom), getPositionFromSquare(moveTo));
         window.isAnimating = true;
         while(window.isAnimating) {
             await sleep(200);
         }
+        //check for en passant
+        if(piece.getPiece() === 'P' || piece.getPiece() === 'p') {
+            if(moveTo === enPassant) {
+                let col = moveTo.split('')[0];
+                let row;
+                if(status.turn === 'white') {
+                    row = (moveTo.split('')[1]) - 1;
+                } else {
+                    row = parseInt(moveTo.split('')[1]) + 1;
+                }
+                let square = col.concat(row);
+                object = getPieceAt(square);
+            }
+        }
+        enPassant = game.board.configuration.enPassant; //save en passant square for the next move
         //check for taking
         if (typeof object !== "undefined") {
             //variables for the animation of the taken piece
-            let takenMoveFrom = moveTo;
+            let takenMoveFrom = object.getSquare();
             let takenMoveTo;
             object.setSquare("A0");
             if (status.turn === 'white') {
@@ -117,6 +138,7 @@ async function play () {
                 takenMoveTo = [ -7 - (outWhite / 4) * 2 - Math.random(), yPos, -5 + (outWhite % 4) * 2 + Math.random()];
                 outWhite++;
             }
+            //move the taken piece
             await startAnimation(object, getPositionFromSquare(takenMoveFrom), takenMoveTo);
             window.isAnimating = true;
             while(window.isAnimating) {
@@ -161,11 +183,11 @@ async function play () {
                 }
             }
         }
-        // check castling
-        let rookSquare;
-        let rook;
-        let castling = false;
+            // check castling
         if (piece.getPiece() === 'K' || piece.getPiece() === 'k') {
+            let rookSquare;
+            let rook;
+            let castling = false;
             // white castle queen side
             if (moveFrom === 'E1' && (moveTo === 'C1')) {
                 rook = getPieceAt('A1');
@@ -191,6 +213,7 @@ async function play () {
                 castling = true;
             }
             if(castling) {
+                //move the rook
                 await startAnimation(rook, rook.getPosition(), getPositionFromSquare(rookSquare));
                 window.isAnimating = true;
                 while(window.isAnimating) {
