@@ -64,7 +64,6 @@ document.getElementById("startGameButton").onclick = async function () {
     } else if(document.getElementById("optionBlack").checked) {
         gameControl.gamePlayAs = 1;
     }
-    console.log(gameControl);
 
     await startGame();
 }
