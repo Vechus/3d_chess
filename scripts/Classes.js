@@ -74,6 +74,10 @@ class GameObject {
         this.roll = r;
     }
 
+    setScale(s) {
+        this.scale = s;
+    }
+
     setDiffuseColor(red, green, blue, alpha) {
         this.color = [red, green, blue, alpha];
     }
