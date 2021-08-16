@@ -191,7 +191,8 @@ async function main() {
         boardGameObject.setPosition(0, 0, 0);
 
         boardGameObject.setName("board")
-        boardGameObject.setTexture(gl, "../assets/models/newboard/Textures/Chess_Board.png")
+        boardGameObject.setTexture(gl, "../assets/models/newboard/Textures/512-chess-bw-diffuse.jpeg",
+            "../assets/models/newboard/Textures/512-chess-bw-nmap.jpeg")
         boardGameObject.setYaw(45);
         boardGameObject.setScale(1.02);
         Scene.push(boardGameObject);
@@ -199,7 +200,8 @@ async function main() {
         let boardFrameGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/newboard/BoardFrame.obj'));
         boardFrameGameObject.setPosition(0, 0.1, 0);
         boardFrameGameObject.setName("board-frame")
-        boardFrameGameObject.setTexture(gl, "../assets/models/newboard/Textures/Wood.bmp")
+        boardFrameGameObject.setTexture(gl, "../assets/models/newboard/Textures/Wood.bmp",
+            "../assets/models/newboard/Textures/WoodNormalMap.png");
         boardFrameGameObject.setYaw(45);
         boardFrameGameObject.setScale(1);
         Scene.push(boardFrameGameObject);

@@ -130,7 +130,11 @@ class GameObject {
     #computeNormalMatrix(worldMatrix) {
         return utils.invertMatrix(utils.transposeMatrix(worldMatrix));
     }
-    setTexture(gl, textureUri) {
+    setTexture(gl, textureUri, normalMapUri) {
+
+
+        //TEXTURE (Unit = 0) ========================================================
+
         let texture = gl.createTexture()
         // use texture unit 0
         gl.activeTexture(gl.TEXTURE0);
@@ -152,6 +156,29 @@ class GameObject {
             gl.generateMipmap(gl.TEXTURE_2D);
         };
         this._texture = texture
+
+        //NORMAL MAP  (Unit=1) ========================================================
+
+        let normalMapTexture = gl.createTexture()
+        // use texture unit 1
+        gl.activeTexture(gl.TEXTURE1);
+        // bind to the TEXTURE_2D bind point of texture unit 0
+        gl.bindTexture(gl.TEXTURE_2D, normalMapTexture);
+
+        let imageNormalMap = new Image()
+        imageNormalMap.src = normalMapUri
+        imageNormalMap.onload = function () {
+            //Make sure this is the active one
+            gl.activeTexture(gl.TEXTURE1);
+            gl.bindTexture(gl.TEXTURE_2D, normalMapTexture);
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, imageNormalMap);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+            gl.generateMipmap(gl.TEXTURE_2D);
+        };
+        this._textureNormalMap = normalMapTexture
+
         this.hasTexture = true;
     }
     /*
@@ -235,6 +262,13 @@ class GameObject {
             gl.activeTexture(gl.TEXTURE0);
             gl.bindTexture(gl.TEXTURE_2D, this._texture);
             gl.uniform1i(textLocation, 0);
+
+            let nmapTextLocation = gl.getUniformLocation(glProgram, "u_normalMap");
+            gl.activeTexture(gl.TEXTURE1);
+            gl.bindTexture(gl.TEXTURE_2D, this._textureNormalMap);
+            gl.uniform1i(nmapTextLocation, 1); //texture unit 1
+
+
         }
 
 
