@@ -70,16 +70,17 @@ document.getElementById("startGameButton").onclick = async function () {
 
 async function startGame() {
     if(gameControl.gameType === 1) {
-        if(gameControl.gamePlayAs === 0) VIEW = pickView(1);
         if(gameControl.gamePlayAs === 2) {
             // random between 0 and 1
             gameControl.gamePlayAs = Math.floor(Math.random() * 2);
         }
         // pick the right view for the human
-        VIEW = pickView(gameControl.gamePlayAs + 1);
-    } else {
+        VIEW = pickView(gameControl.gamePlayAs);
+        camera_angles = views.get(VIEW);
+    } else if(gameControl.gameType === 2){
         // pick the white view
-        VIEW = pickView(1);
+        VIEW = pickView(0);
+        camera_angles = views.get(VIEW);
     }
 
     // start the game - create pieces - takes time

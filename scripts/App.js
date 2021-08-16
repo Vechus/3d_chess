@@ -24,7 +24,7 @@ var boardBounds = {x: [-6, 6], z: [-6, 6]};
 // camera diff vector: updated at event keydown/up and read at each frame
 var camera_diff = { x: 0, y: 0};
 // camera angles
-var camera_angles = { phi: 90, omega: 30 };
+var camera_angles = { phi: 0, omega: 30 };
 
 var selectedSquare = undefined;
 
