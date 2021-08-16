@@ -17,18 +17,57 @@ uniform vec4 lightColor;
 uniform vec4 ambientLight;
 
 uniform sampler2D u_texture;
+uniform sampler2D u_normalMap;
+
 uniform bool hasTexture;
 
 out vec4 outColor;
 
+// SHADING //
 vec4 lambertDiffuse(vec3 normal, vec3 lightDirection, vec4 lightColor) {
     return lightColor * clamp(dot(normal, lightDirection), 0.0, 1.0);
+}
+
+//NORMALS
+
+mat3 computeTBNMatrix(vec3 pos, vec2 uv, vec3 n_norm) {
+    vec3 p_dx = dFdx(pos);
+    vec3 p_dy = dFdy(pos);
+    vec2 tc_dx = dFdx(uv);
+    vec2 tc_dy = dFdy(uv);
+    vec3 t = (tc_dy.y * p_dx - tc_dx.y * p_dy) / (tc_dx.x*tc_dy.y - tc_dy.x*tc_dx.y);
+    t = normalize(t - n_norm * dot(n_norm, t));
+    vec3 b = normalize(cross(n_norm,t));
+    return mat3(t, b, n_norm);
+}
+
+
+vec3 lookupNormalMap() {
+
+    // map to the right range -1 + 1
+
+    // obtain normal from normal map in range [0,1]
+    vec3 normalLookup = texture(u_normalMap, uvFS).rgb;
+    vec3 m = normalize(normalLookup * 2.0 - 1.0);
+
+    mat3 tbn = computeTBNMatrix(fsPosition, uvFS, normalize(fsNormal));
+    return normalize(tbn * m);
 }
 
 
 void main() {
 
+    vec3 X = dFdx(fsPosition);
+    vec3 Y = dFdy(fsPosition);
+
+    // introducing normal maps:
+
+    //having a texture means having a normal map too
     vec3 normal = normalize(fsNormal);
+
+    if(hasTexture == true) {
+       normal =  lookupNormalMap();
+    }
 
     // AMBIENT //
     vec4 ambientCo = ambientLight * ambColor;
@@ -49,7 +88,7 @@ void main() {
 
     vec4 preOut = (ambientCo + phongSpecular + diffuse + emit);
     if(hasTexture == true) {
-        preOut = preOut * texture(u_texture, uvFS); //todo at least nmap
+        preOut = preOut * texture(u_texture, uvFS);
     }
 
 
