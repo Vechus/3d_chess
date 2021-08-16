@@ -2,7 +2,7 @@
 
 //ATTRIBUTES
 
-in vec4 a_position; //
+in vec3 a_position; //
 in vec3 a_normal;   //
 in vec2 a_uv;
 
@@ -16,7 +16,7 @@ uniform mat4 u_view;
 uniform mat4 u_world;
 
 void main() {
-  gl_Position = u_projection * u_view * u_world * a_position;
+  gl_Position = u_projection * u_view * u_world * vec4(a_position, 1.0);
   fsNormal = mat3(u_world) * a_normal;
   uvFS = a_uv; //pass this to the fragment shader
 }
