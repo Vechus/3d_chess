@@ -6,7 +6,7 @@ async function promote(square, turn) {
         piece = piece.toLowerCase();
     }
     else color = 'w';
-    let object = createPiece(gl, glProgram, await loadAndInitMesh(getModelPathFromPiece(piece)), square, color, piece);
+    let object = createPiece(gl, glProgram, await loadAndInitMesh(getModelPathFromPiece(piece)), square, color, piece, CURRENT_KIT);
     Scene.push(object);
     window.isPromoting = false;
 }

@@ -2,6 +2,9 @@
     3D MODELS AND OBJ UTILS
  */
 
+let CURRENT_KIT;
+
+
 var glProgram = 0;
 var gl = 0;
 var Scene = [];
@@ -40,7 +43,7 @@ async function createGamePiece(pieceName, coordinate, color) {
         await sleep(200);
     }
 
-    let piece = createPiece(gl, glProgram, await loadAndInitMesh(getModelPathFromPiece(pieceName)), coordinate, color, pieceName);
+    let piece = createPiece(gl, glProgram, await loadAndInitMesh(getModelPathFromPiece(pieceName)), coordinate, color, pieceName, CURRENT_KIT);
     Scene.push(piece);
 }
 
@@ -157,6 +160,8 @@ function initVAO(gl, program, mesh) {
     return VAO
 }
 
+// MAIN ============================================
+//==================================================
 async function main() {
     // Get A WebGL context
     const canvas = document.getElementById('game-canvas');
@@ -176,6 +181,27 @@ async function main() {
         glProgram = utils.createProgram(gl, vertexShader, fragmentShader);
     });
 
+    // KITS ===============================================================================================================================================
+
+    /* < DEFINITION > */
+    let plasticPhong = new PhongShader(6.0, [0.5, .5, .5, 1.0],
+        [0.5, 0.5, 0.5, 1.0], [0.0, 0.0, 0.0, 1.0]);
+
+    let PLASTIC_KIT = new GameKit(KITS.PLASTIC, "../assets/models/newboard/Textures/512-chess-bw-diffuse.jpeg",
+        "../assets/models/newboard/Textures/512-chess-bw-nmap.jpeg", plasticPhong,
+        [1.0, 1.0, 1.0, 1.0], [0.1, 0.1001, 0.1, 1.0])
+    PLASTIC_KIT.frameTextureURI = "../assets/models/newboard/Textures/computer-plastic.jpeg";
+    PLASTIC_KIT.frameNormalMapURI = "../assets/models/newboard/Textures/computer-plastic-normal.jpeg";
+
+
+
+    /* < ASSIGNMENT > */
+
+    CURRENT_KIT = PLASTIC_KIT;
+
+    //=============================================================================================================================================
+
+
     //FETCH ASSETS
     //* ==========================================================================================================================================
 
@@ -191,8 +217,8 @@ async function main() {
         boardGameObject.setPosition(0, 0, 0);
 
         boardGameObject.setName("board")
-        boardGameObject.setTexture(gl, "../assets/models/newboard/Textures/512-chess-bw-diffuse.jpeg",
-            "../assets/models/newboard/Textures/512-chess-bw-nmap.jpeg")
+        boardGameObject.setTexture(gl, CURRENT_KIT.textureURI.toString(),
+            CURRENT_KIT.normalMapURI.toString())
         boardGameObject.setYaw(45);
         boardGameObject.setScale(1.02);
         Scene.push(boardGameObject);
@@ -200,8 +226,8 @@ async function main() {
         let boardFrameGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/newboard/BoardFrame.obj'));
         boardFrameGameObject.setPosition(0, 0.1, 0);
         boardFrameGameObject.setName("board-frame")
-        boardFrameGameObject.setTexture(gl, "../assets/models/newboard/Textures/Wood.bmp",
-            "../assets/models/newboard/Textures/WoodNormalMap.png");
+        boardFrameGameObject.setTexture(gl, CURRENT_KIT.frameTextureURI.toString(),CURRENT_KIT.frameNormalMapURI.toString()
+            );
         boardFrameGameObject.setYaw(45);
         boardFrameGameObject.setScale(1);
         Scene.push(boardFrameGameObject);
@@ -315,9 +341,9 @@ async function main() {
             //
             //->introducing phong
             //renderPhong(gl, projectionMatrix, viewMatrix, phongShader, eyeDirectionV3, lightDirectionV3, lightColorV4, ambientLightV4)
+            let ambientLight = [0.21, 0.21, 0.21, 1.0];
 
-            let objPhongShader = new PhongShader(16.0, [0.5, .5, .5, 1.0], [0.5, 0.3, 1.0, 1.0], [0.0, 0.0, 0.0, 1.0])
-            sceneObject.renderPhong(gl, projectionMatrix, viewMatrix, objPhongShader, cameraPosition, u_lightDirection, [0.8, .8, .8, 1], [0.1, 0.1, 0.1, 1.0])
+            sceneObject.renderPhong(gl, projectionMatrix, viewMatrix, CURRENT_KIT.phong, cameraPosition, u_lightDirection, [0.7, .7, .7, 1], ambientLight)
 
         })
         requestAnimationFrame(render);

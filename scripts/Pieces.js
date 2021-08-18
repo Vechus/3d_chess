@@ -1,9 +1,11 @@
-function createPiece(gl, glProgram, mesh, coordinate, color, pieceName) {
+function createPiece(gl, glProgram, mesh, coordinate, color, pieceName, kit) {
     let pieceObject = new GameObject(gl, glProgram, mesh);
+
 
     //black pieces
     if(color === 'b')
-        pieceObject.setDiffuseColor(0.2, 0.18, 0.18, 0.5);
+        pieceObject.setDiffuseColor(kit.blackColor[0], kit.blackColor[1], kit.blackColor[2], kit.blackColor[3]);
+    else pieceObject.setDiffuseColor(kit.whiteColor[0], kit.whiteColor[1], kit.whiteColor[2], kit.whiteColor[3])
 
     pieceObject.placeOnSquare(coordinate);
     pieceObject.setPiece(pieceName);

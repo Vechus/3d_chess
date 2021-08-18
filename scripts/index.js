@@ -160,9 +160,9 @@ async function play () {
                 }
                 let promotedObject;
                 if(status.turn === 'white')
-                    promotedObject = createPiece(gl, glProgram, await loadAndInitMesh(getModelPathFromPiece('Q')), moveTo, 'w', 'Q');
+                    promotedObject = createPiece(gl, glProgram, await loadAndInitMesh(getModelPathFromPiece('Q')), moveTo, 'w', 'Q', CURRENT_KIT);
                 else
-                    promotedObject = createPiece(gl, glProgram, await loadAndInitMesh(getModelPathFromPiece('q')), moveTo, 'b', 'q');
+                    promotedObject = createPiece(gl, glProgram, await loadAndInitMesh(getModelPathFromPiece('q')), moveTo, 'b', 'q', CURRENT_KIT);
                 Scene.push(promotedObject);
             }
             else {

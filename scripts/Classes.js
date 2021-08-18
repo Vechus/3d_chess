@@ -263,3 +263,80 @@ class PhongShader {
         this.emitV4 = emitV4;
     }
 }
+
+const KITS = {PLASTIC: "PLASTIC", WOOD: "WOOD"}
+
+class GameKit {
+
+    constructor(kitEnum, textureURI, normalMapURI, phong, whiteColor, blackColor) {
+        this._textureURI = textureURI;
+        this._normalMapURI = normalMapURI;
+        this._phong = phong;
+        this._whiteColor = whiteColor;
+        this._blackColor = blackColor;
+        if (!(kitEnum in KITS)) console.error("Give me an enum")
+        this.kit = kitEnum
+
+        this._frameTextureURI = "../assets/models/newboard/Textures/Wood.bmp";
+        this._frameNormalMapURI = "../assets/models/newboard/Textures/WoodNormalMap.png";
+
+    }
+
+
+    get frameTextureURI() {
+        return this._frameTextureURI;
+    }
+
+    set frameTextureURI(value) {
+        this._frameTextureURI = value;
+    }
+
+    get frameNormalMapURI() {
+        return this._frameNormalMapURI;
+    }
+
+    set frameNormalMapURI(value) {
+        this._frameNormalMapURI = value;
+    }
+
+    get textureURI() {
+        return this._textureURI;
+    }
+
+    set textureURI(value) {
+        this._textureURI = value;
+    }
+
+    get normalMapURI() {
+        return this._normalMapURI;
+    }
+
+    set normalMapURI(value) {
+        this._normalMapURI = value;
+    }
+
+    get phong() {
+        return this._phong;
+    }
+
+    set phong(value) {
+        this._phong = value;
+    }
+
+    get whiteColor() {
+        return this._whiteColor;
+    }
+
+    set whiteColor(value) {
+        this._whiteColor = value;
+    }
+
+    get blackColor() {
+        return this._blackColor;
+    }
+
+    set blackColor(value) {
+        this._blackColor = value;
+    }
+
+}
