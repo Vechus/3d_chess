@@ -264,7 +264,7 @@ class PhongShader {
     }
 }
 
-const KITS = {PLASTIC: "PLASTIC", WOOD: "WOOD"}
+const KITS = {PLASTIC: "PLASTIC"/*, WOOD: "WOOD" */}
 
 class GameKit {
 

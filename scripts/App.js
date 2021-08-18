@@ -187,6 +187,7 @@ async function main() {
     let plasticPhong = new PhongShader(6.0, [0.5, .5, .5, 1.0],
         [0.5, 0.5, 0.5, 1.0], [0.0, 0.0, 0.0, 1.0]);
 
+    /* PLASTIC */
     let PLASTIC_KIT = new GameKit(KITS.PLASTIC, "../assets/models/newboard/Textures/512-chess-bw-diffuse.jpeg",
         "../assets/models/newboard/Textures/512-chess-bw-nmap.jpeg", plasticPhong,
         [1.0, 1.0, 1.0, 1.0], [0.1, 0.1001, 0.1, 1.0])
@@ -196,6 +197,8 @@ async function main() {
 
 
     /* < ASSIGNMENT > */
+
+
 
     CURRENT_KIT = PLASTIC_KIT;
 
