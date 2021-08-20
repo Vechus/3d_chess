@@ -182,7 +182,7 @@ class GameObject {
         this.hasTexture = true;
     }
 
-    renderPhong(gl, projectionMatrix, viewMatrix, phongShader, eyePosition, lightDirectionV3, lightColorV4, ambientLightV4) {
+    renderPhong(gl, projectionMatrix, viewMatrix, phongShader, eyePosition, LIGHTS, ambientLightV4) {
 
         //Vertex Shader
         let vsView = gl.getUniformLocation(glProgram, "u_view");
@@ -218,14 +218,32 @@ class GameObject {
         let fsEyeDirection3 = gl.getUniformLocation(glProgram, 'eyePosition');
         gl.uniform3fv(fsEyeDirection3, eyePosition);
 
+        // LIGHTS //
+
         let fsLightDirection3 = gl.getUniformLocation(glProgram, 'lightDirectionVector');
-        gl.uniform3fv(fsLightDirection3, lightDirectionV3);
+        gl.uniform3fv(fsLightDirection3, LIGHTS.directionalLight.direction);
 
         let fsLightColor4 = gl.getUniformLocation(glProgram, 'lightColor');
-        gl.uniform4fv(fsLightColor4, lightColorV4);
+        gl.uniform4fv(fsLightColor4, LIGHTS.directionalLight.color);
+
+        /*
+        uniform vec3 spotLightPosition;
+        uniform vec4 spotLightColor;
+        uniform float spotLightDecay;
+        uniform float cIN, cOUT;
+         */
+
+        gl.uniform3fv(gl.getUniformLocation(glProgram, 'spotLightDirection'), LIGHTS.spotLight.direction);
+        gl.uniform3fv(gl.getUniformLocation(glProgram, 'spotLightPosition'), LIGHTS.spotLight.position);
+        gl.uniform4fv(gl.getUniformLocation(glProgram, 'spotLightColor'), LIGHTS.spotLight.color);
+        gl.uniform1f(gl.getUniformLocation(glProgram, 'spotLightDecay'), LIGHTS.spotLight.decay);
+        gl.uniform1f(gl.getUniformLocation(glProgram, 'cIN'), LIGHTS.spotLight.cIN);
+        gl.uniform1f(gl.getUniformLocation(glProgram, 'cOUT'), LIGHTS.spotLight.cOUT);
 
         let fsAmbientLight = gl.getUniformLocation(glProgram, 'ambientLight');
-        gl.uniform4fv(fsAmbientLight, ambientLightV4);
+        gl.uniform4fv(fsAmbientLight, ambientLightV4); //todo: pass this in 'LIGHTS'
+
+        //
 
         gl.uniform1i(gl.getUniformLocation(glProgram,"hasTexture"), 0);
 

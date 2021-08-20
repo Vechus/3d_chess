@@ -277,6 +277,10 @@ async function main() {
         let ly = document.getElementById("ly").value;
         let lz = document.getElementById("lz").value;
 
+        let inputSpotLightDirection = [document.getElementById("lxs").value,
+            document.getElementById("lys").value,
+            document.getElementById("lzs").value]
+
         document.getElementById("info-box").innerText = "Camera Position: " + cam_x_pos + " " + cam_y_pos + " " + cam_z_pos +
             "" +
             "" +
@@ -330,9 +334,14 @@ async function main() {
          * ==========================================================================================================================================
          */
 
-            //LIGHT=====================================================================================================================
+        //LIGHT=====================================================================================================================
         let lDirectionVector = [lx, ly, lz]
-        let u_lightDirection = (lDirectionVector); //no need to normalize, vector components swing between -1 and 1
+       // let u_lightDirection = (lDirectionVector); //no need to normalize, vector components swing between -1 and 1
+
+        let directionalLight = { direction : lDirectionVector, color : [.07, .01, .20, 1] }
+        let spotLight = { position: [0, 13, 1], direction: inputSpotLightDirection, color : [.8, .8, .8, 1], decay : 0.5, cIN : 20, cOUT: 56 }
+
+        let LIGHTS = {directionalLight, spotLight}
 
         Scene.forEach((sceneObject) => {
 
@@ -346,7 +355,7 @@ async function main() {
             //renderPhong(gl, projectionMatrix, viewMatrix, phongShader, eyeDirectionV3, lightDirectionV3, lightColorV4, ambientLightV4)
             let ambientLight = [0.21, 0.21, 0.21, 1.0];
 
-            sceneObject.renderPhong(gl, projectionMatrix, viewMatrix, CURRENT_KIT.phong, cameraPosition, u_lightDirection, [0.7, .7, .7, 1], ambientLight)
+            sceneObject.renderPhong(gl, projectionMatrix, viewMatrix, CURRENT_KIT.phong, cameraPosition, LIGHTS, ambientLight)
 
         })
         requestAnimationFrame(render);
