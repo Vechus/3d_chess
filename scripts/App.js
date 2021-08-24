@@ -187,20 +187,30 @@ async function main() {
     let plasticPhong = new PhongShader(6.0, [0.5, .5, .5, 1.0],
         [0.5, 0.5, 0.5, 1.0], [0.0, 0.0, 0.0, 1.0]);
 
+    let woodPhong = new PhongShader(1.0, [0.5, .5, .5, 1.0],
+        [0.1, 0.1, 0.1, 1.0], [0.0, 0.0, 0.0, 1.0]);
+
     /* PLASTIC */
     let PLASTIC_KIT = new GameKit(KITS.PLASTIC, "../assets/models/newboard/Textures/512-chess-bw-diffuse.jpeg",
         "../assets/models/newboard/Textures/512-chess-bw-nmap.jpeg", plasticPhong,
-        [1.0, 1.0, 1.0, 1.0], [0.1, 0.1001, 0.1, 1.0])
+        [1.0, 1.0, 1.0, 1.0], [0.1, 0.1001, 0.1, 1.0]);
     PLASTIC_KIT.frameTextureURI = "../assets/models/newboard/Textures/computer-plastic.jpeg";
     PLASTIC_KIT.frameNormalMapURI = "../assets/models/newboard/Textures/computer-plastic-normal.jpeg";
 
-
+    let WOOD_KIT = new GameKit(KITS.WOOD, "../assets/models/newboard/Textures/512-chess-bw-diffuse.jpeg",
+        "../assets/models/newboard/Textures/512-chess-bw-nmap.jpeg", woodPhong,
+        [1.0, 1.0, 1.0, 1.0], [0.1, 0.1001, 0.1, 1.0]);
+    WOOD_KIT.frameTextureURI = "../assets/models/newboard/Textures/WoodPieces.jpeg";
+    WOOD_KIT.frameNormalMapURI = "../assets/models/newboard/Textures/WoodPiecesNormalMap.png";
+    WOOD_KIT.whiteTextureURI = "../assets/models/newboard/Textures/WoodPieces.jpeg";
+    WOOD_KIT.blackTextureURI = "../assets/models/newboard/Textures/WoodPieces.jpeg";
+    WOOD_KIT.piecesNormalMapURI = "../assets/models/newboard/Textures/WoodPiecesNormalMap.png";
 
     /* < ASSIGNMENT > */
 
 
 
-    CURRENT_KIT = PLASTIC_KIT;
+    CURRENT_KIT = WOOD_KIT;
 
     //=============================================================================================================================================
 
@@ -338,8 +348,8 @@ async function main() {
         let lDirectionVector = [lx, ly, lz]
        // let u_lightDirection = (lDirectionVector); //no need to normalize, vector components swing between -1 and 1
 
-        let directionalLight = { direction : lDirectionVector, color : [.07, .01, .20, 1] }
-        let spotLight = { position: [0, 13, 1], direction: inputSpotLightDirection, color : [.8, .8, .8, 1], decay : 0.5, cIN : 20, cOUT: 56 }
+        let directionalLight = { direction : lDirectionVector, color : [.9, .9, .9, 1] }
+        let spotLight = { position: [0, 13, 1], direction: inputSpotLightDirection, color : [1, 1, 1, 1], decay : 0.5, cIN : 20, cOUT: 56 }
 
         let LIGHTS = {directionalLight, spotLight}
 

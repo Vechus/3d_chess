@@ -282,9 +282,31 @@ class PhongShader {
     }
 }
 
-const KITS = {PLASTIC: "PLASTIC"/*, WOOD: "WOOD" */}
+const KITS = {PLASTIC: "PLASTIC", WOOD: "WOOD"};
 
 class GameKit {
+    get piecesNormalMapURI() {
+        return this._piecesNormalMapURI;
+    }
+
+    set piecesNormalMapURI(value) {
+        this._piecesNormalMapURI = value;
+    }
+    get whiteTextureURI() {
+        return this._whiteTextureURI;
+    }
+
+    set whiteTextureURI(value) {
+        this._whiteTextureURI = value;
+    }
+
+    get blackTextureURI() {
+        return this._blackTextureURI;
+    }
+
+    set blackTextureURI(value) {
+        this._blackTextureURI = value;
+    }
 
     constructor(kitEnum, textureURI, normalMapURI, phong, whiteColor, blackColor) {
         this._textureURI = textureURI;
@@ -297,6 +319,10 @@ class GameKit {
 
         this._frameTextureURI = "../assets/models/newboard/Textures/Wood.bmp";
         this._frameNormalMapURI = "../assets/models/newboard/Textures/WoodNormalMap.png";
+
+        this._whiteTextureURI = undefined;
+        this._blackTextureURI = undefined;
+        this._piecesNormalMapURI = undefined;
 
     }
 
