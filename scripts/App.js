@@ -190,6 +190,9 @@ async function main() {
     let woodPhong = new PhongShader(1.0, [0.5, .5, .5, 1.0],
         [0.1, 0.1, 0.1, 1.0], [0.0, 0.0, 0.0, 1.0]);
 
+    let silverPhong = new PhongShader(1.0, [0.3, .3, .3, 1.0],
+        [0.26, .27, .29, 1.0], [0.0, 0.0, 0.0, 1.0]);
+
     /* PLASTIC */
     let PLASTIC_KIT = new GameKit(KITS.PLASTIC, "../assets/models/newboard/Textures/512-chess-bw-diffuse.jpeg",
         "../assets/models/newboard/Textures/512-chess-bw-nmap.jpeg", plasticPhong,
@@ -197,6 +200,7 @@ async function main() {
     PLASTIC_KIT.frameTextureURI = "../assets/models/newboard/Textures/computer-plastic.jpeg";
     PLASTIC_KIT.frameNormalMapURI = "../assets/models/newboard/Textures/computer-plastic-normal.jpeg";
 
+    /* WOOD */
     let WOOD_KIT = new GameKit(KITS.WOOD, "../assets/models/newboard/Textures/512-chess-bw-diffuse.jpeg",
         "../assets/models/newboard/Textures/512-chess-bw-nmap.jpeg", woodPhong,
         [1.0, 1.0, 1.0, 1.0], [0.1, 0.1001, 0.1, 1.0]);
@@ -206,11 +210,21 @@ async function main() {
     WOOD_KIT.blackTextureURI = "../assets/models/newboard/Textures/WoodPieces.jpeg";
     WOOD_KIT.piecesNormalMapURI = "../assets/models/newboard/Textures/WoodPiecesNormalMap.png";
 
+    /* METAL */
+    let METAL_KIT = new GameKit(KITS.METAL, "../assets/models/newboard/Textures/512-chess-bw-diffuse.jpeg",
+        "../assets/models/newboard/Textures/512-chess-bw-nmap.jpeg", silverPhong,
+        [1.0, 1.0, 1.0, 1.0], [0.1, 0.1001, 0.1, 1.0]);
+    METAL_KIT.frameTextureURI = "../assets/models/newboard/Textures/metal.jpg";
+    METAL_KIT.frameNormalMapURI = "../assets/models/newboard/Textures/metalNormalMap.png";
+    METAL_KIT.whiteTextureURI = "../assets/models/newboard/Textures/metal.jpg";
+    METAL_KIT.blackTextureURI = "../assets/models/newboard/Textures/metal.jpg";
+    METAL_KIT.piecesNormalMapURI = "../assets/models/newboard/Textures/metalNormalMap.png";
+
     /* < ASSIGNMENT > */
 
 
 
-    CURRENT_KIT = WOOD_KIT;
+    CURRENT_KIT = METAL_KIT;
 
     //=============================================================================================================================================
 
