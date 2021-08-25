@@ -193,6 +193,12 @@ async function main() {
     let silverPhong = new PhongShader(1.0, [0.3, .3, .3, 1.0],
         [0.26, .27, .29, 1.0], [0.0, 0.0, 0.0, 1.0]);
 
+    let marblePhong = new PhongShader(1.0, [0.5, .5, .5, 1.0],
+        [0.1, 0.1, 0.1, 1.0], [0.0, 0.0, 0.0, 1.0]);
+
+    let glassPhong = new PhongShader(1.0, [0.3, .3, .3, 1.0],
+        [0.26, .27, .29, 1.0], [0.0, 0.0, 0.0, 1.0]);
+
     /* PLASTIC */
     let PLASTIC_KIT = new GameKit(KITS.PLASTIC, "../assets/models/newboard/Textures/512-chess-bw-diffuse.jpeg",
         "../assets/models/newboard/Textures/512-chess-bw-nmap.jpeg", plasticPhong,
@@ -220,11 +226,31 @@ async function main() {
     METAL_KIT.blackTextureURI = "../assets/models/newboard/Textures/metal.jpg";
     METAL_KIT.piecesNormalMapURI = "../assets/models/newboard/Textures/metalNormalMap.png";
 
+    /* MARBLE */
+    let MARBLE_KIT = new GameKit(KITS.MARBLE, "../assets/models/newboard/Textures/512-chess-bw-diffuse.jpeg",
+        "../assets/models/newboard/Textures/512-chess-bw-nmap.jpeg", marblePhong,
+        [1.0, 1.0, 1.0, 1.0], [0.1, 0.1001, 0.1, 1.0]);
+    MARBLE_KIT.frameTextureURI = "../assets/models/newboard/Textures/marble.jpg";
+    MARBLE_KIT.frameNormalMapURI = "../assets/models/newboard/Textures/marbleNormalMap.jfif";
+    MARBLE_KIT.whiteTextureURI = "../assets/models/newboard/Textures/marblePieces.jpg";
+    MARBLE_KIT.blackTextureURI = "../assets/models/newboard/Textures/marbleGlass.png";
+    MARBLE_KIT.piecesNormalMapURI = "../assets/models/newboard/Textures/marbleNormalMap.jfif";
+
+    /* MARBLE */
+    let GLASS_KIT = new GameKit(KITS.GLASS, "../assets/models/newboard/Textures/512-chess-bw-diffuse.jpeg",
+        "../assets/models/newboard/Textures/512-chess-bw-nmap.jpeg", glassPhong,
+        [1.0, 1.0, 1.0, 1.0], [0.1, 0.1001, 0.1, 1.0]);
+    GLASS_KIT.frameTextureURI = "../assets/models/newboard/Textures/glassPieces.jpg";
+    GLASS_KIT.frameNormalMapURI = "../assets/models/newboard/Textures/glassNormalMap.jpg";
+    GLASS_KIT.whiteTextureURI = "../assets/models/newboard/Textures/glassPieces.jpg";
+    GLASS_KIT.blackTextureURI = "../assets/models/newboard/Textures/glassBlack.jpg";
+    GLASS_KIT.piecesNormalMapURI = "../assets/models/newboard/Textures/glassNormalMap.jpg";
+
     /* < ASSIGNMENT > */
 
 
 
-    CURRENT_KIT = METAL_KIT;
+    CURRENT_KIT = GLASS_KIT;
 
     //=============================================================================================================================================
 
