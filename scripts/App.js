@@ -9,6 +9,9 @@ var glProgram = 0;
 var gl = 0;
 var Scene = [];
 var timer;
+var skyboxProgram;
+
+var currentSkybox = 'beach';
 
 //for the animation
 var pieceToMove;
@@ -181,6 +184,109 @@ async function main() {
         glProgram = utils.createProgram(gl, vertexShader, fragmentShader);
     });
 
+    //SHADERS (SKYBOX) ====================================================================================================================================
+    await utils.loadFiles([shaderDir + 'skybox-vs.glsl', shaderDir + 'skybox-fs.glsl'], function (shaderText) {
+        var vertexShader = utils.createShader(gl, gl.VERTEX_SHADER, shaderText[0]);
+        var fragmentShader = utils.createShader(gl, gl.FRAGMENT_SHADER, shaderText[1]);
+
+        skyboxProgram = utils.createProgram(gl, vertexShader, fragmentShader);
+    });
+
+    let skyboxVertPos;
+    let skyboxTexture;
+    let skyboxVao;
+    let skyboxVertPosAttr;
+    let skyboxTexHandle;
+    let inverseViewProjMatrixHandle;
+    function loadSkyBox() {
+        skyboxVertPos = new Float32Array(
+            [
+                -1, -1, 1.0,
+                1, -1, 1.0,
+                -1,  1, 1.0,
+                -1,  1, 1.0,
+                1, -1, 1.0,
+                1,  1, 1.0,
+            ]);
+
+        skyboxVao = gl.createVertexArray();
+        gl.bindVertexArray(skyboxVao);
+
+        var positionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, skyboxVertPos, gl.STATIC_DRAW);
+        gl.enableVertexAttribArray(skyboxVertPosAttr);
+        gl.vertexAttribPointer(skyboxVertPosAttr, 3, gl.FLOAT, false, 0, 0);
+
+        skyboxTexture = gl.createTexture();
+        gl.activeTexture(gl.TEXTURE0+3);
+        gl.bindTexture(gl.TEXTURE_CUBE_MAP, skyboxTexture);
+
+        let envTexDir = "../assets/skybox/" + currentSkybox + '/';
+
+        const faceInfos = [
+            {
+                target: gl.TEXTURE_CUBE_MAP_POSITIVE_X,
+                url: envTexDir+'posx.jpg',
+            },
+            {
+                target: gl.TEXTURE_CUBE_MAP_NEGATIVE_X,
+                url: envTexDir+'negx.jpg',
+            },
+            {
+                target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
+                url: envTexDir+'posy.jpg',
+            },
+            {
+                target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y,
+                url: envTexDir+'negy.jpg',
+            },
+            {
+                target: gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
+                url: envTexDir+'posz.jpg',
+            },
+            {
+                target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z,
+                url: envTexDir+'negz.jpg',
+            },
+        ];
+        faceInfos.forEach((faceInfo) => {
+            const {target, url} = faceInfo;
+
+            // Upload the canvas to the cubemap face.
+            const level = 0;
+            const internalFormat = gl.RGBA;
+            const width = 1024;
+            const height = 1024;
+            const format = gl.RGBA;
+            const type = gl.UNSIGNED_BYTE;
+
+            // setup each face so it's immediately renderable
+            gl.texImage2D(target, level, internalFormat, width, height, 0, format, type, null);
+
+            // Asynchronously load an image
+            const image = new Image();
+            image.src = url;
+            image.addEventListener('load', function() {
+                // Now that the image has loaded upload it to the texture.
+                gl.activeTexture(gl.TEXTURE0+3);
+                gl.bindTexture(gl.TEXTURE_CUBE_MAP, skyboxTexture);
+                gl.texImage2D(target, level, internalFormat, format, type, image);
+                gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
+            });
+
+
+        });
+        gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+    }
+
+    function getSkyboxAttributesAndUniforms() {
+        skyboxTexHandle = gl.getUniformLocation(skyboxProgram, "u_texture");
+        inverseViewProjMatrixHandle = gl.getUniformLocation(skyboxProgram, "inverseViewProjMatrix");
+        skyboxVertPosAttr = gl.getAttribLocation(skyboxProgram, "in_position");
+    }
+
     // KITS ===============================================================================================================================================
 
     /* < DEFINITION > */
@@ -258,6 +364,8 @@ async function main() {
     //FETCH ASSETS
     //* ==========================================================================================================================================
 
+    loadSkyBox();
+
     const boardPlane = {
         p0: [0, 0.7, 0],
         p1: [1, 0.7, 1],
@@ -304,6 +412,8 @@ async function main() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.enable(gl.DEPTH_TEST);
     gl.enable(gl.CULL_FACE);
+
+    getSkyboxAttributesAndUniforms();
 
 
     //==========================================================================================================================================
@@ -355,6 +465,21 @@ async function main() {
 
 
         //* ==========================================================================================================================================
+        // draw skybox
+        gl.useProgram(skyboxProgram);
+
+        gl.activeTexture(gl.TEXTURE0+3);
+        gl.bindTexture(gl.TEXTURE_CUBE_MAP, skyboxTexture);
+        gl.uniform1i(skyboxTexHandle, 3);
+
+        let viewProjMat = utils.multiplyMatrices(projectionMatrix, viewMatrix);
+        let inverseViewProjMatrix = utils.invertMatrix(viewProjMat);
+        gl.uniformMatrix4fv(inverseViewProjMatrixHandle, gl.FALSE, utils.transposeMatrix(inverseViewProjMatrix));
+
+        gl.bindVertexArray(skyboxVao);
+        gl.depthFunc(gl.LEQUAL);
+        gl.drawArrays(gl.TRIANGLES, 0, 1*6);
+
         //* ==========================================================================================================================================
 
         // raycasting transformations: from pixel to position
