@@ -48,7 +48,37 @@
             </nav>
         </div>
     </header>
+
+
     <div class="d-flex bd-highlight">
+
+        <!-- card on the left -->
+        <div class="card bg-dark text-white" style="width: 22rem; height: fit-content">
+            <div class="card-body">
+                <h5> Lights controls</h5>
+                <br>
+                <form class="controls">
+                    <label for="lx" class="form-label">Light Direction (x)</label>
+                    <input type="range" class="form-range" min="-1" max="1" id="lx" value="-0.2" step="0.001">
+                    <label for="ly" class="form-label">Light Direction (y)</label>
+                    <input type="range" class="form-range" min="-1" max="1" id="ly" value="0.8" step="0.001">
+                    <label for="lz" class="form-label">Light Direction (z)</label>
+                    <input type="range" class="form-range" min="-1" max="1" id="lz" value="0.7" step="0.001">
+
+                    <label for="lxs" class="form-label">Spot Light Direction (x)</label>
+                    <input type="range" class="form-range" min="-1" max="1" id="lxs" value="0" step="0.001">
+                    <label for="lys" class="form-label">Spot Light Direction (y)</label>
+                    <input type="range" class="form-range" min="-1" max="1" id="lys" value="1" step="0.001">
+                    <label for="lzs" class="form-label">Spot Light Direction (z)</label>
+                    <input type="range" class="form-range" min="-1" max="1" id="lzs" value="0" step="0.001">
+                </form>
+                <hr/>
+                <div>
+                    <h5>Change View </h5>
+                    <button type="button" class="btn btn-primary" id="view_btn" >Change View </button>
+                </div>
+            </div>
+        </div>
         <div class="p-2 w-100 bd-highlight">
             <main class="inner cover">
                 <canvas id="game-canvas" class="img-responsive" width="1280" height="720">
@@ -56,28 +86,17 @@
                 </canvas>
             </main>
         </div>
+
+        <!-- card on the right -->
         <div class="p-2 bd-highlight">
-            <div class="card bg-dark text-white" style="width: 18rem;">
+            <div class="card bg-dark text-white" style="width: 13rem;">
                 <!-- <img class="card-img-top" src="..." alt="Card image cap"> -->
-
-
                 <div class="card-body">
-                    <h5> Camera controls</h5>
-                    <ul>
-                        <li>
-                            <p align="left"> Use arrows or  <img src="../assets/images/wasd.png" width="90px">
-                                <br> to move the camera <u>up/down</u> and <u>right/left</u> git</p>
-                        </li>
-                        <li>
-                            <p align="left"> Use <img src="../assets/images/letter_z.png" width="35px">
-                                and <img src="../assets/images/letter_x.png" width="35px"> for <u>zoom</u> </p>
-                        </li>
-                    </ul>
-
                     <h5 class="card-title" id="game-title">Game controls</h5>
-                    <h4 class="card-title" id="gameType-subtitle">Select game type</h4>
+                    <br>
+                    <h6 class="card-title" id="gameType-subtitle">Select game type</h6>
 
-                    <div class="btn-group-vertical btn-group-toggle" data-toggle="buttons">
+                    <div class="btn-group-vertical btn-group-toggle btn-group-sm" data-toggle="buttons">
                         <label class="btn btn-secondary active">
                             <input type="radio" name="gametype" id="optionIAvIA" autocomplete="off" checked> PC vs PC
                         </label>
@@ -90,9 +109,9 @@
 
                     <hr/>
 
-                    <h4 class="card-title" id="level-subtitle">Select computer level</h4>
+                    <h6 class="card-title" id="level-subtitle">Select computer level</h6>
 
-                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                    <div class="btn-group btn-group-toggle btn-group-sm" data-toggle="buttons">
                         <label class="btn btn-secondary">
                             <input type="radio" name="optionIA" id="optionIA0" autocomplete="off"> 0
                         </label>
@@ -112,9 +131,9 @@
 
                     <hr/>
 
-                    <h4 class="card-title" id="side-subtitle">Play as</h4>
+                    <h6 class="card-title" id="side-subtitle">Play as</h6>
 
-                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                    <div class="btn-group btn-group-toggle btn-group-sm" data-toggle="buttons">
                         <label class="btn btn-secondary">
                             <input type="radio" name="playAs" id="optionWhite" autocomplete="off"> White
                         </label>
@@ -126,57 +145,41 @@
                         </label>
                     </div>
                 </div>
-
-                <hr/>
-
-                <button type="button" class="btn btn-success btn-lg btn-block" id="startGameButton">Start new game</button>
-
-                <hr/>
-
-                <div>
-                    <h5>Change View:</h5>
-                    <button type="button" class="btn btn-primary" id="view_btn">Change View</button>
-                </div>
                 <div class="card-body">
-                    <h5 class="card-title" id="card-title">Controls</h5>
-
-                    <form class="controls">
-                        <hr>
-                        <h3>LIGHT</h3>
-                        <label for="lx" class="form-label">Light Direction (x)</label>
-                        <input type="range" class="form-range" min="-1" max="1" id="lx" value="-0.2" step="0.001">
-                        <label for="ly" class="form-label">Light Direction (y)</label>
-                        <input type="range" class="form-range" min="-1" max="1" id="ly" value="0.8" step="0.001">
-                        <label for="lz" class="form-label">Light Direction (z)</label>
-                        <input type="range" class="form-range" min="-1" max="1" id="lz" value="0.7" step="0.001">
-
-                        <label for="lxs" class="form-label">Spot Light Direction (x)</label>
-                        <input type="range" class="form-range" min="-1" max="1" id="lxs" value="0" step="0.001">
-                        <label for="lys" class="form-label">Spot Light Direction (y)</label>
-                        <input type="range" class="form-range" min="-1" max="1" id="lys" value="1" step="0.001">
-                        <label for="lzs" class="form-label">Spot Light Direction (z)</label>
-                        <input type="range" class="form-range" min="-1" max="1" id="lzs" value="0" step="0.001">
-                        <hr>
-                        <div id="info-box"> Camera pos x y z rot</div>
-                    </form>
-                </div>
-                <div class="card-body">
-                    <h4 class="card-title" id="card-subtitle">Theme</h4>
-                        <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Select theme
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="#">Wood</a>
-                                <a class="dropdown-item" href="#">Stone</a>
-                                <a class="dropdown-item" href="#">Neon</a>
-                                <a class="dropdown-item" href="#">Toon</a>
-                            </div>
+                    <h5 class="card-title" id="card-subtitle">Theme</h5>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Select theme
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="#">Wood</a>
+                            <a class="dropdown-item" href="#">Stone</a>
+                            <a class="dropdown-item" href="#">Neon</a>
+                            <a class="dropdown-item" href="#">Toon</a>
                         </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- card on the bottom -->
+    <h5 style="left: 60px; bottom: 100px; position: absolute "> Camera controls</h5>
+        <div class="card bg-dark text-white flex-row" style="height: 60px;">
+            <div class="p-2 bd-highlight" style="width: 3000px">
+             <p align="left"> &#8226 Use arrows or  <img src="../assets/images/wasd.png" width="80px">
+                 to move the camera <u>up/down</u> and <u>right/left</u>
+             </p>
+            </div>
+            <div class="p-2 bd-highlight" style="width: 150rem">
+                <p align="left"> &#8226 Use <img src="../assets/images/letter_z.png" width="35px">
+                    and <img src="../assets/images/letter_x.png" width="35px"> to <u>zoom</u>
+                </p>
+            </div>
+            <button type="button" class="btn btn-success btn-lg btn-block" style="width: 1000px" id="startGameButton">Start new game</button>
+
+        </div>
+
 
     <footer class="mastfoot mt-auto">
         <div class="inner">

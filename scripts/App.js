@@ -256,8 +256,8 @@ async function main() {
             // Upload the canvas to the cubemap face.
             const level = 0;
             const internalFormat = gl.RGBA;
-            const width = 1024;
-            const height = 1024;
+            const width = 512;
+            const height = 512;
             const format = gl.RGBA;
             const type = gl.UNSIGNED_BYTE;
 
@@ -441,11 +441,11 @@ async function main() {
             document.getElementById("lys").value,
             document.getElementById("lzs").value]
 
-        document.getElementById("info-box").innerText = "Camera Position: " + cam_x_pos + " " + cam_y_pos + " " + cam_z_pos +
+        /*document.getElementById("info-box").innerText = "Camera Position: " + cam_x_pos + " " + cam_y_pos + " " + cam_z_pos +
             "" +
             "" +
             "" +
-            "";
+            "";*/
         document.getElementById("view_btn").innerText = VIEW;
 
         //INIT CAMERA STUFF * ==========================================================================================================================================
