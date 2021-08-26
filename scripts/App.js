@@ -2,7 +2,7 @@
     3D MODELS AND OBJ UTILS
  */
 
-let CURRENT_KIT;
+let CURRENT_KIT, NEXT_KIT;
 
 
 var glProgram = 0;
@@ -35,6 +35,12 @@ var camera_angles = { phi: 0, omega: 30 };
 var camera_depth = 1;
 
 var selectedSquare = undefined;
+
+/* CLIENT EVENTS */
+document.getElementById("view_btn").onclick = function () {
+    VIEW = pickNextView();
+    camera_angles = views.get(VIEW);
+}
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -76,11 +82,6 @@ function getClosestSquare(planeCoordinate) {
     });
 
     return closestSquare;
-}
-
-document.getElementById("view_btn").onclick = function () {
-    VIEW = pickNextView();
-    camera_angles = views.get(VIEW);
 }
 
 function getPieceAt(square) {
@@ -305,12 +306,16 @@ async function main() {
     let glassPhong = new PhongShader(1.0, [0.3, .3, .3, 1.0],
         [0.26, .27, .29, 1.0], [0.0, 0.0, 0.0, 1.0]);
 
+    /* GAME KITS */
+    let GameKits = {};
+
     /* PLASTIC */
     let PLASTIC_KIT = new GameKit(KITS.PLASTIC, "../assets/models/newboard/Textures/512-chess-bw-diffuse.jpeg",
         "../assets/models/newboard/Textures/512-chess-bw-nmap.jpeg", plasticPhong,
         [1.0, 1.0, 1.0, 1.0], [0.1, 0.1001, 0.1, 1.0]);
     PLASTIC_KIT.frameTextureURI = "../assets/models/newboard/Textures/computer-plastic.jpeg";
     PLASTIC_KIT.frameNormalMapURI = "../assets/models/newboard/Textures/computer-plastic-normal.jpeg";
+    GameKits[KITS.PLASTIC] = PLASTIC_KIT;
 
     /* WOOD */
     let WOOD_KIT = new GameKit(KITS.WOOD, "../assets/models/newboard/Textures/512-chess-bw-diffuse.jpeg",
@@ -321,6 +326,7 @@ async function main() {
     WOOD_KIT.whiteTextureURI = "../assets/models/newboard/Textures/WoodPieces.jpeg";
     WOOD_KIT.blackTextureURI = "../assets/models/newboard/Textures/WoodPieces.jpeg";
     WOOD_KIT.piecesNormalMapURI = "../assets/models/newboard/Textures/WoodPiecesNormalMap.png";
+    GameKits[KITS.WOOD] = WOOD_KIT;
 
     /* METAL */
     let METAL_KIT = new GameKit(KITS.METAL, "../assets/models/newboard/Textures/512-chess-bw-diffuse.jpeg",
@@ -331,6 +337,7 @@ async function main() {
     METAL_KIT.whiteTextureURI = "../assets/models/newboard/Textures/metal.jpg";
     METAL_KIT.blackTextureURI = "../assets/models/newboard/Textures/metal.jpg";
     METAL_KIT.piecesNormalMapURI = "../assets/models/newboard/Textures/metalNormalMap.png";
+    GameKits[KITS.METAL] = METAL_KIT;
 
     /* MARBLE */
     let MARBLE_KIT = new GameKit(KITS.MARBLE, "../assets/models/newboard/Textures/512-chess-bw-diffuse.jpeg",
@@ -341,6 +348,7 @@ async function main() {
     MARBLE_KIT.whiteTextureURI = "../assets/models/newboard/Textures/marblePieces.jpg";
     MARBLE_KIT.blackTextureURI = "../assets/models/newboard/Textures/marbleGlass.png";
     MARBLE_KIT.piecesNormalMapURI = "../assets/models/newboard/Textures/marbleNormalMap.jfif";
+    GameKits[KITS.MARBLE] = MARBLE_KIT;
 
     /* MARBLE */
     let GLASS_KIT = new GameKit(KITS.GLASS, "../assets/models/newboard/Textures/512-chess-bw-diffuse.jpeg",
@@ -351,9 +359,24 @@ async function main() {
     GLASS_KIT.whiteTextureURI = "../assets/models/newboard/Textures/glassPieces.jpg";
     GLASS_KIT.blackTextureURI = "../assets/models/newboard/Textures/glassBlack.jpg";
     GLASS_KIT.piecesNormalMapURI = "../assets/models/newboard/Textures/glassNormalMap.jpg";
+    GameKits[KITS.GLASS] = GLASS_KIT;
 
     /* < ASSIGNMENT > */
-
+    for (const [key, value] of Object.entries(KITS)) {
+        const header = document.createElement('a');
+        header.className = "dropdown-item";
+        header.textContent = value;
+        header.addEventListener("click", async function(){
+            CURRENT_KIT = GameKits[Object.keys(KITS).find(key => KITS[key] === header.textContent)];
+            await spawnBoards();
+            for(let i = 2; i < Scene.length; i++) {
+                let obj = Scene[i];
+                updatePieceKit(obj, CURRENT_KIT);
+            }
+            document.getElementById("dropdownMenuButton").innerText = header.textContent;
+        });
+        document.getElementById("dropdownElements").append(header);
+    }
 
 
     CURRENT_KIT = PLASTIC_KIT;
@@ -382,7 +405,7 @@ async function main() {
             CURRENT_KIT.normalMapURI.toString())
         boardGameObject.setYaw(45);
         boardGameObject.setScale(1.02);
-        Scene.push(boardGameObject);
+        Scene[0] = boardGameObject;
 
         let boardFrameGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/newboard/BoardFrame.obj'));
         boardFrameGameObject.setPosition(0, 0.1, 0);
@@ -391,7 +414,7 @@ async function main() {
             );
         boardFrameGameObject.setYaw(45);
         boardFrameGameObject.setScale(1);
-        Scene.push(boardFrameGameObject);
+        Scene[1] = boardFrameGameObject;
     }
 
     await spawnBoards();

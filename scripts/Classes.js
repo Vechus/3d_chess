@@ -34,7 +34,8 @@ class GameObject {
         this.yaw = 0;
         this.pitch = 0;
         this.roll = 0;
-        this.color = [1.0, 1.0, 1.0, 1.0]
+        this.color = [1.0, 1.0, 1.0, 1.0];
+        this.pieceColor = '';
         this.scale = 1.0;
 
         this.hasTexture = false;
@@ -106,6 +107,14 @@ class GameObject {
         this.square = square;
     }
 
+    getPieceColor() {
+        return this.pieceColor;
+    }
+
+    setPieceColor(color) {
+        this.pieceColor = color;
+    }
+
     #computeWorldMatrix() {
         let scaleMatrix = utils.MakeScaleMatrix(this.scale);
         let rotateXMatrix = utils.MakeRotateXMatrix(this.pitch);
@@ -130,6 +139,12 @@ class GameObject {
     #computeNormalMatrix(worldMatrix) {
         return utils.invertMatrix(utils.transposeMatrix(worldMatrix));
     }
+
+    resetTexture() {
+        this.hasTexture = false;
+        this._texture = undefined;
+    }
+
     setTexture(gl, textureUri, normalMapUri) {
 
 

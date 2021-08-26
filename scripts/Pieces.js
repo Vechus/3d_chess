@@ -16,12 +16,34 @@ function createPiece(gl, glProgram, mesh, coordinate, color, pieceName, kit) {
         }
     }
 
+    pieceObject.setPieceColor(color);
     pieceObject.placeOnSquare(coordinate);
     pieceObject.setPiece(pieceName);
     if(pieceName === 'N') pieceObject.setYaw(90);
     if(pieceName === 'n') pieceObject.setYaw(270);
 
     return pieceObject;
+}
+
+function updatePieceKit(pieceObject, kit) {
+
+    //black pieces
+    if(pieceObject.getPieceColor() === 'b') {
+        pieceObject.setDiffuseColor(kit.blackColor[0], kit.blackColor[1], kit.blackColor[2], kit.blackColor[3]);
+        if(kit.blackTextureURI !== undefined && kit.piecesNormalMapURI !== undefined) {
+            pieceObject.setTexture(gl, kit.blackTextureURI, kit.piecesNormalMapURI);
+        } else {
+            pieceObject.resetTexture();
+        }
+    }
+    else { // white pieces
+        pieceObject.setDiffuseColor(kit.whiteColor[0], kit.whiteColor[1], kit.whiteColor[2], kit.whiteColor[3]);
+        if(kit.whiteTextureURI !== undefined && kit.piecesNormalMapURI !== undefined) {
+            pieceObject.setTexture(gl, kit.whiteTextureURI, kit.piecesNormalMapURI);
+        } else {
+            pieceObject.resetTexture();
+        }
+    }
 }
 
 function getModelPathFromPiece(piece) {
