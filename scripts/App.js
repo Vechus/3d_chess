@@ -300,11 +300,11 @@ async function main() {
     let silverPhong = new PhongShader(1.0, [0.3, .3, .3, 1.0],
         [0.26, .27, .29, 1.0], [0.0, 0.0, 0.0, 1.0]);
 
-    let marblePhong = new PhongShader(1.0, [0.5, .5, .5, 1.0],
-        [0.1, 0.1, 0.1, 1.0], [0.0, 0.0, 0.0, 1.0]);
+    let marblePhong = new PhongShader(10.0, [0.2, .2, .2, 1.0],
+        [0.8, 0.8, 0.8, 1.0], [0.0, 0.0, 0.0, 1.0]);
 
-    let glassPhong = new PhongShader(1.0, [0.3, .3, .3, 1.0],
-        [0.26, .27, .29, 1.0], [0.0, 0.0, 0.0, 1.0]);
+    let neonPhong = new PhongShader(10.0, [0.3, .3, .3, .2],
+        [0.26, .27, .29, 1.0], [1, 1, 1, 1.0]);
 
     /* GAME KITS */
     let GameKits = {};
@@ -320,11 +320,11 @@ async function main() {
     /* WOOD */
     let WOOD_KIT = new GameKit(KITS.WOOD, "../assets/models/newboard/Textures/512-chess-bw-diffuse.jpeg",
         "../assets/models/newboard/Textures/512-chess-bw-nmap.jpeg", woodPhong,
-        [1.0, 1.0, 1.0, 1.0], [0.1, 0.1001, 0.1, 1.0]);
+        [1.0, 1.0, 1.0, 1.0], [1.0, 1.0, 1.0, 1.0]);
     WOOD_KIT.frameTextureURI = "../assets/models/newboard/Textures/WoodPieces.jpeg";
     WOOD_KIT.frameNormalMapURI = "../assets/models/newboard/Textures/WoodPiecesNormalMap.png";
     WOOD_KIT.whiteTextureURI = "../assets/models/newboard/Textures/WoodPieces.jpeg";
-    WOOD_KIT.blackTextureURI = "../assets/models/newboard/Textures/WoodPieces.jpeg";
+    WOOD_KIT.blackTextureURI = "../assets/models/newboard/Textures/WoodDarkPieces.jpg";
     WOOD_KIT.piecesNormalMapURI = "../assets/models/newboard/Textures/WoodPiecesNormalMap.png";
     GameKits[KITS.WOOD] = WOOD_KIT;
 
@@ -342,24 +342,24 @@ async function main() {
     /* MARBLE */
     let MARBLE_KIT = new GameKit(KITS.MARBLE, "../assets/models/newboard/Textures/512-chess-bw-diffuse.jpeg",
         "../assets/models/newboard/Textures/512-chess-bw-nmap.jpeg", marblePhong,
-        [1.0, 1.0, 1.0, 1.0], [0.1, 0.1001, 0.1, 1.0]);
+        [.9, .9, .9, 1.0], [1.0, 1.0, 1.0, 1.0]);
     MARBLE_KIT.frameTextureURI = "../assets/models/newboard/Textures/marble.jpg";
     MARBLE_KIT.frameNormalMapURI = "../assets/models/newboard/Textures/marbleNormalMap.jfif";
     MARBLE_KIT.whiteTextureURI = "../assets/models/newboard/Textures/marblePieces.jpg";
-    MARBLE_KIT.blackTextureURI = "../assets/models/newboard/Textures/marbleGlass.png";
+    MARBLE_KIT.blackTextureURI = "../assets/models/newboard/Textures/marbleBlack.png";
     MARBLE_KIT.piecesNormalMapURI = "../assets/models/newboard/Textures/marbleNormalMap.jfif";
     GameKits[KITS.MARBLE] = MARBLE_KIT;
 
-    /* MARBLE */
-    let GLASS_KIT = new GameKit(KITS.GLASS, "../assets/models/newboard/Textures/512-chess-bw-diffuse.jpeg",
-        "../assets/models/newboard/Textures/512-chess-bw-nmap.jpeg", glassPhong,
-        [1.0, 1.0, 1.0, 1.0], [0.1, 0.1001, 0.1, 1.0]);
-    GLASS_KIT.frameTextureURI = "../assets/models/newboard/Textures/glassPieces.jpg";
-    GLASS_KIT.frameNormalMapURI = "../assets/models/newboard/Textures/glassNormalMap.jpg";
-    GLASS_KIT.whiteTextureURI = "../assets/models/newboard/Textures/glassPieces.jpg";
-    GLASS_KIT.blackTextureURI = "../assets/models/newboard/Textures/glassBlack.jpg";
-    GLASS_KIT.piecesNormalMapURI = "../assets/models/newboard/Textures/glassNormalMap.jpg";
-    GameKits[KITS.GLASS] = GLASS_KIT;
+    /* NEON */
+    let NEON_KIT = new GameKit(KITS.NEON, "../assets/models/newboard/Textures/neonBoard.png",
+        "../assets/models/newboard/Textures/NeonBoardNormalMap.png", neonPhong,
+        [1.0, 1.0, 1.0, 1.0], [1.0, 1.0, 1.0, 1.0]);
+    NEON_KIT.frameTextureURI = "../assets/models/newboard/Textures/glassPieces.jpg";
+    NEON_KIT.frameNormalMapURI = "../assets/models/newboard/Textures/glassNormalMap.jpg";
+    NEON_KIT.whiteTextureURI = "../assets/models/newboard/Textures/neon2.jpg";
+    NEON_KIT.blackTextureURI = "../assets/models/newboard/Textures/neon3.jpg";
+    NEON_KIT.piecesNormalMapURI = "../assets/models/newboard/Textures/NeonNormalMap.png";
+    GameKits[KITS.NEON] = NEON_KIT;
 
     /* < ASSIGNMENT > */
     for (const [key, value] of Object.entries(KITS)) {
@@ -373,6 +373,10 @@ async function main() {
                 let obj = Scene[i];
                 updatePieceKit(obj, CURRENT_KIT);
             }
+            if(CURRENT_KIT === GameKits[KITS.NEON]) currentSkybox = "galaxy";
+            else currentSkybox = "beach";
+            loadSkyBox();
+
             document.getElementById("dropdownMenuButton").innerText = header.textContent;
         });
         document.getElementById("dropdownElements").append(header);
@@ -538,6 +542,11 @@ async function main() {
 
         let directionalLight = { direction : lDirectionVector, color : [.9, .9, .9, 1] }
         let spotLight = { position: [0, 13, 1], direction: inputSpotLightDirection, color : [1, 1, 1, 1], decay : 0.5, cIN : 20, cOUT: 56 }
+
+        if(CURRENT_KIT === NEON_KIT) {
+            directionalLight.color = [0, 0, 0, 1];
+            spotLight.color = [0.0, 0.0, 0.0, 1];
+        }
 
         let LIGHTS = {directionalLight, spotLight}
 

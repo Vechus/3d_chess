@@ -297,7 +297,7 @@ class PhongShader {
     }
 }
 
-const KITS = {PLASTIC: "PLASTIC", WOOD: "WOOD", METAL: "METAL", MARBLE: "MARBLE", GLASS: "GLASS"};
+const KITS = {PLASTIC: "PLASTIC", WOOD: "WOOD", METAL: "METAL", MARBLE: "MARBLE", NEON: "NEON"};
 
 class GameKit {
     get piecesNormalMapURI() {
