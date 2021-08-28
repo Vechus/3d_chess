@@ -295,8 +295,8 @@ async function main() {
     let plasticPhong = new PhongShader(6.0, ambientLightColor,
         [0.5, 0.5, 0.5, 1.0], [0.0, 0.0, 0.0, 1.0]);
 
-    let woodPhong = new PhongShader(1.0, ambientLightColor,
-        [0.1, 0.1, 0.1, 1.0], [0.0, 0.0, 0.0, 1.0]);
+    let woodPhong = new PhongShader(16.0, ambientLightColor,
+        [0.5, 0.5, 0.5, 1.0], [0.0, 0.0, 0.0, 1.0]);
 
     let silverPhong = new PhongShader(1.0, ambientLightColor,
         [0.26, .27, .29, 1.0], [0.0, 0.0, 0.0, 1.0]);
@@ -319,14 +319,14 @@ async function main() {
     GameKits[KITS.PLASTIC] = PLASTIC_KIT;
 
     /* WOOD */
-    let WOOD_KIT = new GameKit(KITS.WOOD, "../assets/models/newboard/Textures/512-chess-bw-diffuse.jpeg",
-        "../assets/models/newboard/Textures/512-chess-bw-nmap.jpeg", woodPhong,
-        [1.0, 1.0, 1.0, 1.0], [1.0, 1.0, 1.0, 1.0]);
-    WOOD_KIT.frameTextureURI = "../assets/models/newboard/Textures/WoodPieces.jpeg";
-    WOOD_KIT.frameNormalMapURI = "../assets/models/newboard/Textures/WoodPiecesNormalMap.png";
-    WOOD_KIT.whiteTextureURI = "../assets/models/newboard/Textures/WoodPieces.jpeg";
-    WOOD_KIT.blackTextureURI = "../assets/models/newboard/Textures/WoodDarkPieces.jpg";
-    WOOD_KIT.piecesNormalMapURI = "../assets/models/newboard/Textures/WoodPiecesNormalMap.png";
+    let WOOD_KIT = new GameKit(KITS.WOOD, "../assets/models/newboard/Textures/woodkit/woodboard.png",
+        "../assets/models/newboard/Textures/woodkit/woodboard-normalmap.png", woodPhong,
+        [1.0, 1.0, 1.0, 1.0], [.50, .30, .40, 1.0]);
+    WOOD_KIT.frameTextureURI = "../assets/models/newboard/Textures/woodkit/woodframe.bmp";
+    WOOD_KIT.frameNormalMapURI = "../assets/models/newboard/Textures/woodkit/woodframe-normalmap.png";
+    WOOD_KIT.whiteTextureURI = "../assets/models/newboard/Textures/woodkit/512-woodoak.jpg";
+    WOOD_KIT.blackTextureURI = "../assets/models/newboard/Textures/woodkit/512-woodoak.jpg"; //same texture, different material color
+    WOOD_KIT.piecesNormalMapURI = "../assets/models/newboard/Textures/woodkit/512-woodoak-normalmap.png";
     GameKits[KITS.WOOD] = WOOD_KIT;
 
     /* METAL
