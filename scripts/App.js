@@ -292,20 +292,13 @@ async function main() {
 
     let ambientLightColor = [0.05,0.05, 0.05, 1.0]
     /* < DEFINITION > */
-    let plasticPhong = new PhongShader(6.0, ambientLightColor,
+    let plasticPhong = new PhongShader(6.0,
         [0.5, 0.5, 0.5, 1.0], [0.0, 0.0, 0.0, 1.0]);
 
-    let woodPhong = new PhongShader(16.0, ambientLightColor,
+    let woodPhong = new PhongShader(16.0,
         [0.5, 0.5, 0.5, 1.0], [0.0, 0.0, 0.0, 1.0]);
 
-    let silverPhong = new PhongShader(1.0, ambientLightColor,
-        [0.26, .27, .29, 1.0], [0.0, 0.0, 0.0, 1.0]);
-
-    let marblePhong = new PhongShader(10.0, ambientLightColor,
-        [0.8, 0.8, 0.8, 1.0], [0.0, 0.0, 0.0, 1.0]);
-
-    let neonPhong = new PhongShader(10.0, ambientLightColor,
-        [0.26, .27, .29, 1.0], [1, 1, 1, 1.0]);
+    let neonPhong = new PhongShader(10.0, [0.26, .27, .29, 1.0], [1, 1, 1, 1.0]);
 
     /* GAME KITS */
     let GameKits = {};
@@ -555,8 +548,9 @@ async function main() {
         let spotLightColor = getColorFromHtml("spot-light-color");
         let directionalLight = { direction : lDirectionVector, color : directionalLightColor }
         let spotLight = { position: [0, 13, 1], direction: inputSpotLightDirection, color : spotLightColor, decay : 0.5, cIN : 20, cOUT: 56 }
+        let ambientColorHtml = getColorFromHtml("ambient-light-color");
 
-        if(CURRENT_KIT === NEON_KIT) { //kill lights
+        if(CURRENT_KIT === NEON_KIT) { //kill lights (just emit)
             directionalLight.color = [0, 0, 0, 1];
             spotLight.color = [0.0, 0.0, 0.0, 1];
         }
@@ -573,9 +567,8 @@ async function main() {
             //
             //->introducing phong
             //renderPhong(gl, projectionMatrix, viewMatrix, phongShader, eyeDirectionV3, lightDirectionV3, lightColorV4, ambientLightV4)
-            let ambientLight = [0.21, 0.21, 0.21, 1.0];
 
-            sceneObject.renderPhong(gl, projectionMatrix, viewMatrix, CURRENT_KIT.phong, cameraPosition, LIGHTS, ambientLight)
+            sceneObject.renderPhong(gl, projectionMatrix, viewMatrix, CURRENT_KIT.phong, cameraPosition, LIGHTS, ambientColorHtml)
 
         })
         requestAnimationFrame(render);

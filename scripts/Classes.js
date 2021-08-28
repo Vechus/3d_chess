@@ -221,9 +221,6 @@ class GameObject {
         let fsDiffuseColor4 = gl.getUniformLocation(glProgram, 'diffColor');
         gl.uniform4fv(fsDiffuseColor4, this.color);
 
-        let fsAmbientColor4 = gl.getUniformLocation(glProgram, 'ambColor');
-        gl.uniform4fv(fsAmbientColor4, phongShader.ambColorV4);
-
         let fsSpecularColor4 = gl.getUniformLocation(glProgram, 'specularColor');
         gl.uniform4fv(fsSpecularColor4, phongShader.specularColorV4);
 
@@ -256,7 +253,7 @@ class GameObject {
         gl.uniform1f(gl.getUniformLocation(glProgram, 'cOUT'), LIGHTS.spotLight.cOUT);
 
         let fsAmbientLight = gl.getUniformLocation(glProgram, 'ambientLight');
-        gl.uniform4fv(fsAmbientLight, ambientLightV4); //todo: pass this in 'LIGHTS'
+        gl.uniform4fv(fsAmbientLight, ambientLightV4);
 
         //
 
@@ -289,11 +286,22 @@ class GameObject {
 
 class PhongShader {
 
-    constructor(specularShineF, ambColorV4, specularColorV4, emitV4) {
-        this.specularShineF = specularShineF;
-        this.ambColorV4 = ambColorV4;
-        this.specularColorV4 = specularColorV4;
-        this.emitV4 = emitV4;
+    constructor(specularShineF, specularColorV4, emitV4) {
+        this._specularShineF = specularShineF;
+        this._specularColorV4 = specularColorV4;
+        this._emitV4 = emitV4;
+    }
+
+    get specularShineF() {
+        return this._specularShineF;
+    }
+
+    get specularColorV4() {
+        return this._specularColorV4;
+    }
+
+    get emitV4() {
+        return this._emitV4;
     }
 }
 

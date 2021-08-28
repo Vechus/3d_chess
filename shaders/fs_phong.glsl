@@ -7,14 +7,13 @@ in vec2 uvFS; //from vertex shader
 
 uniform float specularShine;		// specular coefficient for both Blinn and Phong
 uniform vec4 diffColor;		    // diffuse color
-uniform vec4 ambColor;		    // material ambient color
+uniform vec4 ambientLight;		    // material ambient color/light
 uniform vec4 specularColor;		// specular color
 uniform vec4 emit;			    // emitted color
 
 uniform vec3 eyePosition;		    // looking direction
 uniform vec3 lightDirectionVector;
 uniform vec4 lightColor;
-uniform vec4 ambientLight;
 
 uniform vec3 spotLightPosition;
 uniform vec3 spotLightDirection;
@@ -99,8 +98,6 @@ void main() {
 
     float tgtDistance = distance(spotLightPosition, fsPosition);
     vec4 spotLightColorIntensity = spotLightComputeColor(spotLightPosition, fsPosition, tgtDistance, spotLightDecay, cIN, cOUT, spotLightDirection);
-    // AMBIENT //
-    vec4 ambientCo = ambientLight * ambColor;
 
     vec3 eyeDir = normalize(eyePosition - fsPosition);
 
@@ -123,7 +120,7 @@ void main() {
 
     //with EMISSION (emit)
 
-    vec4 preOut = (ambientCo + phongSpecular + diffuse + emit);
+    vec4 preOut = (ambientLight + phongSpecular + diffuse + emit);
     if(hasTexture == true) {
         preOut = preOut * texture(u_texture, uvFS);
     }
