@@ -290,20 +290,21 @@ async function main() {
 
     // KITS ===============================================================================================================================================
 
+    let ambientLightColor = [0.05,0.05, 0.05, 1.0]
     /* < DEFINITION > */
-    let plasticPhong = new PhongShader(6.0, [0.5, .5, .5, 1.0],
+    let plasticPhong = new PhongShader(6.0, ambientLightColor,
         [0.5, 0.5, 0.5, 1.0], [0.0, 0.0, 0.0, 1.0]);
 
-    let woodPhong = new PhongShader(1.0, [0.5, .5, .5, 1.0],
+    let woodPhong = new PhongShader(1.0, ambientLightColor,
         [0.1, 0.1, 0.1, 1.0], [0.0, 0.0, 0.0, 1.0]);
 
-    let silverPhong = new PhongShader(1.0, [0.3, .3, .3, 1.0],
+    let silverPhong = new PhongShader(1.0, ambientLightColor,
         [0.26, .27, .29, 1.0], [0.0, 0.0, 0.0, 1.0]);
 
-    let marblePhong = new PhongShader(10.0, [0.2, .2, .2, 1.0],
+    let marblePhong = new PhongShader(10.0, ambientLightColor,
         [0.8, 0.8, 0.8, 1.0], [0.0, 0.0, 0.0, 1.0]);
 
-    let neonPhong = new PhongShader(10.0, [0.3, .3, .3, .2],
+    let neonPhong = new PhongShader(10.0, ambientLightColor,
         [0.26, .27, .29, 1.0], [1, 1, 1, 1.0]);
 
     /* GAME KITS */
@@ -328,7 +329,7 @@ async function main() {
     WOOD_KIT.piecesNormalMapURI = "../assets/models/newboard/Textures/WoodPiecesNormalMap.png";
     GameKits[KITS.WOOD] = WOOD_KIT;
 
-    /* METAL */
+    /* METAL
     let METAL_KIT = new GameKit(KITS.METAL, "../assets/models/newboard/Textures/512-chess-bw-diffuse.jpeg",
         "../assets/models/newboard/Textures/512-chess-bw-nmap.jpeg", silverPhong,
         [1.0, 1.0, 1.0, 1.0], [0.1, 0.1001, 0.1, 1.0]);
@@ -339,7 +340,7 @@ async function main() {
     METAL_KIT.piecesNormalMapURI = "../assets/models/newboard/Textures/metalNormalMap.png";
     GameKits[KITS.METAL] = METAL_KIT;
 
-    /* MARBLE */
+
     let MARBLE_KIT = new GameKit(KITS.MARBLE, "../assets/models/newboard/Textures/512-chess-bw-diffuse.jpeg",
         "../assets/models/newboard/Textures/512-chess-bw-nmap.jpeg", marblePhong,
         [.9, .9, .9, 1.0], [1.0, 1.0, 1.0, 1.0]);
@@ -349,7 +350,7 @@ async function main() {
     MARBLE_KIT.blackTextureURI = "../assets/models/newboard/Textures/marbleBlack.png";
     MARBLE_KIT.piecesNormalMapURI = "../assets/models/newboard/Textures/marbleNormalMap.jfif";
     GameKits[KITS.MARBLE] = MARBLE_KIT;
-
+    */
     /* NEON */
     let NEON_KIT = new GameKit(KITS.NEON, "../assets/models/newboard/Textures/neonBoard.png",
         "../assets/models/newboard/Textures/NeonBoardNormalMap.png", neonPhong,
@@ -538,12 +539,11 @@ async function main() {
 
         //LIGHT=====================================================================================================================
         let lDirectionVector = [lx, ly, lz]
-       // let u_lightDirection = (lDirectionVector); //no need to normalize, vector components swing between -1 and 1
 
         let directionalLight = { direction : lDirectionVector, color : [.9, .9, .9, 1] }
         let spotLight = { position: [0, 13, 1], direction: inputSpotLightDirection, color : [1, 1, 1, 1], decay : 0.5, cIN : 20, cOUT: 56 }
 
-        if(CURRENT_KIT === NEON_KIT) {
+        if(CURRENT_KIT === NEON_KIT) { //kill lights
             directionalLight.color = [0, 0, 0, 1];
             spotLight.color = [0.0, 0.0, 0.0, 1];
         }
