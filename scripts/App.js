@@ -465,6 +465,7 @@ async function main() {
         let ly = document.getElementById("ly").value;
         let lz = document.getElementById("lz").value;
 
+
         let inputSpotLightDirection = [document.getElementById("lxs").value,
             document.getElementById("lys").value,
             document.getElementById("lzs").value]
@@ -540,8 +541,20 @@ async function main() {
         //LIGHT=====================================================================================================================
         let lDirectionVector = [lx, ly, lz]
 
-        let directionalLight = { direction : lDirectionVector, color : [.9, .9, .9, 1] }
-        let spotLight = { position: [0, 13, 1], direction: inputSpotLightDirection, color : [1, 1, 1, 1], decay : 0.5, cIN : 20, cOUT: 56 }
+        function getColorFromHtml(url) {
+            let value = document.getElementById(url).value //es 0x039f94ff
+
+            let r = parseInt(value.toString().slice(1,3), 16)/255;
+            let g = parseInt(value.toString().slice(3,5), 16)/255;
+            let b = parseInt(value.toString().slice(5,7), 16)/255;
+
+
+            return [r,g,b,1]
+        }
+        let directionalLightColor = getColorFromHtml("directional-light-color");
+        let spotLightColor = getColorFromHtml("spot-light-color");
+        let directionalLight = { direction : lDirectionVector, color : directionalLightColor }
+        let spotLight = { position: [0, 13, 1], direction: inputSpotLightDirection, color : spotLightColor, decay : 0.5, cIN : 20, cOUT: 56 }
 
         if(CURRENT_KIT === NEON_KIT) { //kill lights
             directionalLight.color = [0, 0, 0, 1];

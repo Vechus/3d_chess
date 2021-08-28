@@ -68,9 +68,18 @@
                     <label for="lxs" class="form-label">Spot Light Direction (x)</label>
                     <input type="range" class="form-range" min="-1" max="1" id="lxs" value="0" step="0.001">
                     <label for="lys" class="form-label">Spot Light Direction (y)</label>
-                    <input type="range" class="form-range" min="0.9" max="1.1" id="lys" value="1" step="0.00001">
+                    <input type="range" class="form-range" min="-1" max="1" id="lys" value="1" step="0.001">
                     <label for="lzs" class="form-label">Spot Light Direction (z)</label>
                     <input type="range" class="form-range" min="-1" max="1" id="lzs" value="0" step="0.001">
+
+                    <label>
+                        Directional Light Color:
+                        <input type="color" id ="directional-light-color" value="#626255">
+                    </label>
+                    <label>
+                        Spot Light Color:
+                        <input type="color" id ="spot-light-color" value="#f7f5e9">
+                    </label>
                 </form>
                 <hr/>
                 <div>
