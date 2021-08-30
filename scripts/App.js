@@ -11,7 +11,7 @@ var Scene = [];
 var timer;
 var skyboxProgram;
 
-var currentSkybox = 'beach';
+var currentSkybox = 'polimi';
 
 //for the animation
 var pieceToMove;
@@ -220,7 +220,7 @@ async function main() {
         gl.vertexAttribPointer(skyboxVertPosAttr, 3, gl.FLOAT, false, 0, 0);
 
         skyboxTexture = gl.createTexture();
-        gl.activeTexture(gl.TEXTURE0+3);
+        gl.activeTexture(gl.TEXTURE3);
         gl.bindTexture(gl.TEXTURE_CUBE_MAP, skyboxTexture);
 
         let envTexDir = "../assets/skybox/" + currentSkybox + '/';
@@ -257,8 +257,8 @@ async function main() {
             // Upload the canvas to the cubemap face.
             const level = 0;
             const internalFormat = gl.RGBA;
-            const width = 512;
-            const height = 512;
+            const width = 1024;
+            const height = 1024;
             const format = gl.RGBA;
             const type = gl.UNSIGNED_BYTE;
 
@@ -270,13 +270,11 @@ async function main() {
             image.src = url;
             image.addEventListener('load', function() {
                 // Now that the image has loaded upload it to the texture.
-                gl.activeTexture(gl.TEXTURE0+3);
+                gl.activeTexture(gl.TEXTURE3);
                 gl.bindTexture(gl.TEXTURE_CUBE_MAP, skyboxTexture);
                 gl.texImage2D(target, level, internalFormat, format, type, image);
                 gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
             });
-
-
         });
         gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
         gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
@@ -368,7 +366,7 @@ async function main() {
                 updatePieceKit(obj, CURRENT_KIT);
             }
             if(CURRENT_KIT === GameKits[KITS.NEON]) currentSkybox = "galaxy";
-            else currentSkybox = "beach";
+            else currentSkybox = "polimi";
             loadSkyBox();
 
             document.getElementById("dropdownMenuButton").innerText = header.textContent;
@@ -384,8 +382,6 @@ async function main() {
 
     //FETCH ASSETS
     //* ==========================================================================================================================================
-
-    loadSkyBox();
 
     const boardPlane = {
         p0: [0, 0.7, 0],
@@ -435,6 +431,7 @@ async function main() {
     gl.enable(gl.CULL_FACE);
 
     getSkyboxAttributesAndUniforms();
+    loadSkyBox();
 
 
     //==========================================================================================================================================
