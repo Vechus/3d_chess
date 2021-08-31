@@ -41,6 +41,7 @@ vec4 lambertDiffuse(vec3 normal, vec3 lightDirection, vec4 lightColor) {
 vec3 spotLightComputeDirection(vec3 lightPosition, vec3 pointPosition) {
     return normalize(lightPosition - pointPosition);
 }
+
 vec4 spotLightComputeColor(vec3 Pos, vec3 fs_pos, float targetDistance, float Decay, float ConeIn, float ConeOut, vec3 Dir) {
     vec3 lightDir =  normalize(Pos - fs_pos); //light direction is computed as the same as for point light
     vec4 lightColor = spotLightColor * pow( ( (targetDistance) / length(Pos - fs_pos) ) , Decay) * clamp(
@@ -100,8 +101,8 @@ void main() {
        normal =  lookupNormalMap();
     }
 
-    float tgtDistance = distance(spotLightPosition, fsPosition);
-    vec4 spotLightColorIntensity = spotLightComputeColor(spotLightPosition, fsPosition, tgtDistance, spotLightDecay, cIN, cOUT, spotLightDirection);
+
+    vec4 spotLightColorIntensity = spotLightComputeColor(spotLightPosition, fsPosition, 25.0, spotLightDecay, cIN, cOUT, spotLightDirection);
 
     vec3 eyeDir = normalize(eyePosition - fsPosition);
     vec3 pointLightDirection = normalize(pointLightPosition - fsPosition);

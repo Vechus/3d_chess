@@ -248,7 +248,7 @@ class GameObject {
         gl.uniform3fv(gl.getUniformLocation(glProgram, 'spotLightDirection'), LIGHTS.spotLight.direction);
         gl.uniform3fv(gl.getUniformLocation(glProgram, 'spotLightPosition'), LIGHTS.spotLight.position);
         gl.uniform4fv(gl.getUniformLocation(glProgram, 'spotLightColor'), LIGHTS.spotLight.color);
-        gl.uniform1f(gl.getUniformLocation(glProgram, 'spotLightDecay'), LIGHTS.spotLight.decay);
+        gl.uniform1f(gl.getUniformLocation(glProgram, 'spotLightDecay'), parseInt(LIGHTS.spotLight.decay, 10));
         gl.uniform1f(gl.getUniformLocation(glProgram, 'cIN'), LIGHTS.spotLight.cIN);
         gl.uniform1f(gl.getUniformLocation(glProgram, 'cOUT'), LIGHTS.spotLight.cOUT);
 
