@@ -228,7 +228,7 @@ async function play () {
         console.timeEnd('Calculated in');
         await play();
     } else {
-        alert("Checkmate! " + status.turn + " loses. YOU ARE A LOSER");
+        alert("Checkmate! " + status.turn + " loses.");
         console.log(`${status.turn} is in ${status.checkMate ? 'checkmate' : 'draw'}`);
     }
 }
@@ -251,7 +251,7 @@ async function waitForMove(status) {
         let fromSquare, toSquare;
         let validSel = false;
         while(!validSel) {
-            console.log(status.moves)
+            //console.log(status.moves)
             // first get selected piece - must be of the right color and it has to have the possibility to move
             while (selectedSquare === oldSelected || status.moves[selectedSquare] === undefined) {
                 oldSelected = selectedSquare;
@@ -260,7 +260,7 @@ async function waitForMove(status) {
             oldSelected = selectedSquare;
             fromSquare = selectedSquare;
             let availableMoves = status.moves[fromSquare];
-            console.log(availableMoves);
+            //console.log(availableMoves);
 
             while (selectedSquare === oldSelected) {
                 oldSelected = selectedSquare;

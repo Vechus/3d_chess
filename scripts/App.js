@@ -107,7 +107,7 @@ function getPositionFromSquare(square) {
 
 async function startAnimation(piece, from, to) {
     console.log("start")
-    console.log(piece);
+    //console.log(piece);
 
     pieceToMove = piece;
     moveFrom = from;
@@ -296,6 +296,12 @@ async function main() {
     let woodPhong = new PhongShader(16.0,
         [0.5, 0.5, 0.5, 1.0], [0.0, 0.0, 0.0, 1.0]);
 
+    let metalPhong = new PhongShader(5.0,
+        [0.7969, 0.8047, 0.8047, 1.0], [0.0, 0.0, 0.0, 1.0]);
+
+    let marblePhong = new PhongShader(100.0,
+        [1, 1, 1, 1.0], [0.0, 0.0, 0.0, 1.0]);
+
     let neonPhong = new PhongShader(10.0, [0.26, .27, .29, 1.0], [1, 1, 1, 1.0]);
 
     /* GAME KITS */
@@ -320,18 +326,7 @@ async function main() {
     WOOD_KIT.piecesNormalMapURI = "../assets/models/newboard/Textures/woodkit/512-woodoak-normalmap.png";
     GameKits[KITS.WOOD] = WOOD_KIT;
 
-    /* METAL
-    let METAL_KIT = new GameKit(KITS.METAL, "../assets/models/newboard/Textures/512-chess-bw-diffuse.jpeg",
-        "../assets/models/newboard/Textures/512-chess-bw-nmap.jpeg", silverPhong,
-        [1.0, 1.0, 1.0, 1.0], [0.1, 0.1001, 0.1, 1.0]);
-    METAL_KIT.frameTextureURI = "../assets/models/newboard/Textures/metal.jpg";
-    METAL_KIT.frameNormalMapURI = "../assets/models/newboard/Textures/metalNormalMap.png";
-    METAL_KIT.whiteTextureURI = "../assets/models/newboard/Textures/metal.jpg";
-    METAL_KIT.blackTextureURI = "../assets/models/newboard/Textures/metal.jpg";
-    METAL_KIT.piecesNormalMapURI = "../assets/models/newboard/Textures/metalNormalMap.png";
-    GameKits[KITS.METAL] = METAL_KIT;
-
-
+    /* MARBLE */
     let MARBLE_KIT = new GameKit(KITS.MARBLE, "../assets/models/newboard/Textures/512-chess-bw-diffuse.jpeg",
         "../assets/models/newboard/Textures/512-chess-bw-nmap.jpeg", marblePhong,
         [.9, .9, .9, 1.0], [1.0, 1.0, 1.0, 1.0]);
@@ -341,7 +336,7 @@ async function main() {
     MARBLE_KIT.blackTextureURI = "../assets/models/newboard/Textures/marbleBlack.png";
     MARBLE_KIT.piecesNormalMapURI = "../assets/models/newboard/Textures/marbleNormalMap.jfif";
     GameKits[KITS.MARBLE] = MARBLE_KIT;
-    */
+
     /* NEON */
     let NEON_KIT = new GameKit(KITS.NEON, "../assets/models/newboard/Textures/neonBoard.png",
         "../assets/models/newboard/Textures/NeonBoardNormalMap.png", neonPhong,
@@ -515,7 +510,7 @@ async function main() {
 
             //testPawn.setPosition(intersection[0], intersection[1], intersection[2]);
             clickedState = false;
-            console.log(selectedSquare);
+            //console.log(selectedSquare);
         }
 
         //animation
