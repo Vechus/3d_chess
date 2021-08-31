@@ -472,6 +472,10 @@ async function main() {
             document.getElementById("lys").value,
             document.getElementById("lzs").value]
 
+        let inputPointLightPosition = [document.getElementById("px").value,
+            document.getElementById("py").value,
+            document.getElementById("pz").value]
+
         /*document.getElementById("info-box").innerText = "Camera Position: " + cam_x_pos + " " + cam_y_pos + " " + cam_z_pos +
             "" +
             "" +
@@ -556,8 +560,12 @@ async function main() {
         }
         let directionalLightColor = getColorFromHtml("directional-light-color");
         let spotLightColor = getColorFromHtml("spot-light-color");
+        let pointLightColor = getColorFromHtml("point-light-color");
+
+
         let directionalLight = { direction : lDirectionVector, color : directionalLightColor }
         let spotLight = { position: [0, 13, 1], direction: inputSpotLightDirection, color : spotLightColor, decay : 0.5, cIN : 20, cOUT: 56 }
+        let pointLight = { position: inputPointLightPosition, color: pointLightColor}
         let ambientColorHtml = getColorFromHtml("ambient-light-color");
 
         if(CURRENT_KIT === NEON_KIT) { //kill lights (just emit)
@@ -565,7 +573,8 @@ async function main() {
             spotLight.color = [0.0, 0.0, 0.0, 1];
         }
 
-        let LIGHTS = {directionalLight, spotLight}
+
+        let LIGHTS = {directionalLight, spotLight, pointLight}
 
         Scene.forEach((sceneObject) => {
 

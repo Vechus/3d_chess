@@ -21,6 +21,9 @@ uniform vec4 spotLightColor;
 uniform float spotLightDecay;
 uniform float cIN, cOUT;
 
+uniform vec3 pointLightPosition;
+uniform vec4 pointLightColor;
+
 uniform sampler2D u_texture;
 uniform sampler2D u_normalMap;
 
@@ -100,13 +103,16 @@ void main() {
     vec4 spotLightColorIntensity = spotLightComputeColor(spotLightPosition, fsPosition, tgtDistance, spotLightDecay, cIN, cOUT, spotLightDirection);
 
     vec3 eyeDir = normalize(eyePosition - fsPosition);
+    vec3 pointLightDirection = normalize(pointLightPosition - fsPosition);
 
     // PHONG SPECULAR //
 
     vec4 specularPhongDLight = computePhong(lightDirectionVector, normal, eyeDir);
     vec4 specularPhongSLight = computePhong(spotLightDirection, normal, eyeDir);
+    vec4 specularPhongPLight = computePhong(pointLightDirection, normal, eyeDir);
+
     vec4 phongSpecular = lightColor * specularPhongDLight
-    + spotLightColor * specularPhongSLight * spotLightColorIntensity;
+    + spotLightColor * specularPhongSLight * spotLightColorIntensity + specularPhongPLight * pointLightColor;
 
     //DIFFUSE
     vec4 diffContrDLight = diffColor * lambertDiffuse(normal, lightDirectionVector, lightColor);
@@ -115,8 +121,10 @@ void main() {
     vec4 diffContrSpot = diffColor * lambertDiffuse(normal,
                          spotLightDirection,spotLightColorIntensity
                          );
+    vec4 diffContrPointLight = diffColor * lambertDiffuse(normal, pointLightDirection, pointLightColor);
 
-    vec4 diffuse = diffContrDLight + diffContrSpot;
+
+    vec4 diffuse = diffContrDLight + diffContrSpot + diffContrPointLight;
 
     //with EMISSION (emit)
 

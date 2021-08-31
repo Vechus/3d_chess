@@ -252,6 +252,14 @@ class GameObject {
         gl.uniform1f(gl.getUniformLocation(glProgram, 'cIN'), LIGHTS.spotLight.cIN);
         gl.uniform1f(gl.getUniformLocation(glProgram, 'cOUT'), LIGHTS.spotLight.cOUT);
 
+        /*uniform vec3 pointLightPosition;
+        uniform vec4 pointLightColor;
+
+         */
+
+        gl.uniform3fv(gl.getUniformLocation(glProgram, 'pointLightPosition'), LIGHTS.pointLight.position);
+        gl.uniform4fv(gl.getUniformLocation(glProgram, 'pointLightColor'), LIGHTS.pointLight.color);
+
         let fsAmbientLight = gl.getUniformLocation(glProgram, 'ambientLight');
         gl.uniform4fv(fsAmbientLight, ambientLightV4);
 
