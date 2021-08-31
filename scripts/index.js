@@ -1,6 +1,7 @@
 import {Game} from "./js-chess-engine.mjs";
 import {downByColor} from "./const/board.mjs";
 
+//Controls the gameplay
 
 console.log("Hello Ale, Ali and Luca!")
 let whiteAiLevel = 0;
@@ -65,7 +66,7 @@ document.getElementById("startGameButton").onclick = async function () {
         gameControl.gamePlayAs = 1;
     }
 
-    await startGame();
+    await startGame(); //settings and then start game
 }
 
 async function startGame() {
@@ -92,7 +93,7 @@ async function startGame() {
     await play();
 }
 
-
+//turn controller
 async function play () {
     if(isBeingReset) return;
     const status = game.exportJson();
@@ -233,6 +234,7 @@ async function play () {
     }
 }
 
+//Waits for a move (AI, Human player)
 
 async function waitForMove(status) {
     // reset selected square

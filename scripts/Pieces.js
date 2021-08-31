@@ -1,6 +1,8 @@
+//Creates and return a game object for a piece
 function createPiece(gl, glProgram, mesh, coordinate, color, pieceName, kit) {
     let pieceObject = new GameObject(gl, glProgram, mesh);
 
+    //Set textures and normal maps
 
     //black pieces
     if(color === 'b') {

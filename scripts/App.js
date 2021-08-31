@@ -2,16 +2,16 @@
     3D MODELS AND OBJ UTILS
  */
 
-let CURRENT_KIT, NEXT_KIT;
+let CURRENT_KIT;
 
 
 var glProgram = 0;
 var gl = 0;
-var Scene = [];
+var Scene = []; //stores all the objects in the scene
 var timer;
 var skyboxProgram;
 
-var currentSkybox = 'polimi';
+var currentSkybox = 'polimi'; //Current skybox
 
 //for the animation
 var pieceToMove;
@@ -19,10 +19,11 @@ var moveFrom;
 var moveTo;
 var stepX;
 var stepZ;
-const frames = 10;
+const frames = 10; //total animation keyframes
 
 let VIEW;
 
+//RAYCAST
 var clipX = 0, clipY = 0;
 var ray_nds = [0, 0, 0];
 var boardBounds = {x: [-6, 6], z: [-6, 6]};
@@ -47,15 +48,17 @@ function sleep(ms) {
 }
 
 async function createGamePiece(pieceName, coordinate, color) {
-    // wait for gl to load
+    // wait for gl to load because all is async
     while (gl === 0 || glProgram === 0) {
         await sleep(200);
     }
 
+    //Create a piece and add it to the scene
     let piece = createPiece(gl, glProgram, await loadAndInitMesh(getModelPathFromPiece(pieceName)), coordinate, color, pieceName, CURRENT_KIT);
     Scene.push(piece);
 }
 
+//given coordinates on raycast plane, get the closest board square
 function getClosestSquare(planeCoordinate) {
     // if the click is out of bounds return undefined
     if(planeCoordinate[0] < boardBounds.x[0] || planeCoordinate[0] > boardBounds.x[1] ||
@@ -98,6 +101,7 @@ async function loadAndInitMesh(resourceURI) {
     return new OBJ.Mesh(objString);
 }
 
+//es. from A1 to -5.2, 0, 2.7
 function getPositionFromSquare(square) {
     let tempArray1 = square.split("");
     let col = tempArray1[0];
@@ -105,6 +109,7 @@ function getPositionFromSquare(square) {
     return [coorColumnsMap.get(col), yPos, coorRowsMap.get(row)];
 }
 
+//Starts the animation, update global variables with the current animation step, updates timer
 async function startAnimation(piece, from, to) {
     console.log("start")
     //console.log(piece);
@@ -113,15 +118,15 @@ async function startAnimation(piece, from, to) {
     moveFrom = from;
     moveTo = to;
     timer = 0;
-    stepX = (moveTo[0] - moveFrom[0]) / frames;
+    stepX = (moveTo[0] - moveFrom[0]) / frames; //go from A to B in N frames
     stepZ = (moveTo[2] - moveFrom[2]) / frames;
-    timer++;
+    timer++; //From 0 to FRAMES
 }
 
-
+//if an animation is on, call this function at each render
 function animation() {
-    if (timer <= frames) {
-        pieceToMove.setPosition(moveFrom[0] + stepX * timer, yPos, moveFrom[2] + stepZ * timer);
+    if (timer <= frames) { //if the animation is not over
+        pieceToMove.setPosition(moveFrom[0] + stepX * timer, yPos, moveFrom[2] + stepZ * timer); //update the scene
         timer++;
     } else {
         window.isAnimating = false; //animation terminated
@@ -193,12 +198,15 @@ async function main() {
         skyboxProgram = utils.createProgram(gl, vertexShader, fragmentShader);
     });
 
+    //Skybox is loaded before loading the full scene
     let skyboxVertPos;
     let skyboxTexture;
     let skyboxVao;
     let skyboxVertPosAttr;
     let skyboxTexHandle;
     let inverseViewProjMatrixHandle;
+
+    //load skybox VAO
     function loadSkyBox() {
         skyboxVertPos = new Float32Array(
             [
@@ -225,6 +233,7 @@ async function main() {
 
         let envTexDir = "../assets/skybox/" + currentSkybox + '/';
 
+        //assign images to faces of the cubemap
         const faceInfos = [
             {
                 target: gl.TEXTURE_CUBE_MAP_POSITIVE_X,
@@ -251,6 +260,8 @@ async function main() {
                 url: envTexDir+'negz.jpg',
             },
         ];
+
+        //for each face load the face from the image url
         faceInfos.forEach((faceInfo) => {
             const {target, url} = faceInfo;
 
@@ -280,6 +291,7 @@ async function main() {
         gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
     }
 
+
     function getSkyboxAttributesAndUniforms() {
         skyboxTexHandle = gl.getUniformLocation(skyboxProgram, "u_texture");
         inverseViewProjMatrixHandle = gl.getUniformLocation(skyboxProgram, "inverseViewProjMatrix");
@@ -288,7 +300,6 @@ async function main() {
 
     // KITS ===============================================================================================================================================
 
-    let ambientLightColor = [0.05,0.05, 0.05, 1.0]
     /* < DEFINITION > */
     let plasticPhong = new PhongShader(6.0,
         [0.5, 0.5, 0.5, 1.0], [0.0, 0.0, 0.0, 1.0]);
@@ -334,28 +345,29 @@ async function main() {
     MARBLE_KIT.frameNormalMapURI = "../assets/models/newboard/Textures/marbleNormalMap.jfif";
     MARBLE_KIT.whiteTextureURI = "../assets/models/newboard/Textures/marblePieces.jpg";
     MARBLE_KIT.blackTextureURI = "../assets/models/newboard/Textures/marbleBlack.png";
-    MARBLE_KIT.piecesNormalMapURI = "../assets/models/newboard/Textures/marbleNormalMap.jfif";
+    MARBLE_KIT.piecesNormalMapURI = "../assets/models/newboard/Textures/marbleNormalMap.jfif"; //fake normal map, single color because marble is smooth
+
     GameKits[KITS.MARBLE] = MARBLE_KIT;
 
     /* NEON */
-    let NEON_KIT = new GameKit(KITS.NEON, "../assets/models/newboard/Textures/neonBoard.png",
+    let NEON_KIT = new GameKit(KITS.NEON, "../assets/models/newboard/Textures/neonBoard.png", //untextured frame
         "../assets/models/newboard/Textures/NeonBoardNormalMap.png", neonPhong,
         [1.0, 1.0, 1.0, 1.0], [1.0, 1.0, 1.0, 1.0]);
     NEON_KIT.frameTextureURI = "../assets/models/newboard/Textures/glassPieces.jpg";
     NEON_KIT.frameNormalMapURI = "../assets/models/newboard/Textures/glassNormalMap.jpg";
     NEON_KIT.whiteTextureURI = "../assets/models/newboard/Textures/neon2.jpg";
     NEON_KIT.blackTextureURI = "../assets/models/newboard/Textures/neon3.jpg";
-    NEON_KIT.piecesNormalMapURI = "../assets/models/newboard/Textures/NeonNormalMap.png";
+    NEON_KIT.piecesNormalMapURI = "../assets/models/newboard/Textures/neon-pieces-nmap.png";
     GameKits[KITS.NEON] = NEON_KIT;
 
-    /* < ASSIGNMENT > */
+    /* < For each, create UI Field and load kit when it's selected > */
     for (const [key, value] of Object.entries(KITS)) {
         const header = document.createElement('a');
         header.className = "dropdown-item";
         header.textContent = value;
-        header.addEventListener("click", async function(){
+        header.addEventListener("click", async function(){ //listener on the dropdown menu, that changes the kit when selected
             CURRENT_KIT = GameKits[Object.keys(KITS).find(key => KITS[key] === header.textContent)];
-            await spawnBoards();
+            await spawnBoards(); //and spawn board
             for(let i = 2; i < Scene.length; i++) {
                 let obj = Scene[i];
                 updatePieceKit(obj, CURRENT_KIT);
@@ -369,7 +381,7 @@ async function main() {
         document.getElementById("dropdownElements").append(header);
     }
 
-
+    //begin with plastic kit
     CURRENT_KIT = PLASTIC_KIT;
 
     //=============================================================================================================================================
@@ -378,6 +390,7 @@ async function main() {
     //FETCH ASSETS
     //* ==========================================================================================================================================
 
+    //for reaycast, 3 vertex that creates a plane (the board plane)
     const boardPlane = {
         p0: [0, 0.7, 0],
         p1: [1, 0.7, 1],
@@ -392,16 +405,17 @@ async function main() {
         boardGameObject.setName("board")
         boardGameObject.setTexture(gl, CURRENT_KIT.textureURI.toString(),
             CURRENT_KIT.normalMapURI.toString())
-        boardGameObject.setYaw(45);
+        boardGameObject.setYaw(45); //board is rotated at 45 degrees
         boardGameObject.setScale(1.02);
         Scene[0] = boardGameObject;
 
+        //Frame of the board (different material)
         let boardFrameGameObject = new GameObject(gl, glProgram, await loadAndInitMesh('../assets/models/newboard/BoardFrame.obj'));
         boardFrameGameObject.setPosition(0, 0.1, 0);
         boardFrameGameObject.setName("board-frame")
-        boardFrameGameObject.setTexture(gl, CURRENT_KIT.frameTextureURI.toString(),CURRENT_KIT.frameNormalMapURI.toString()
+        boardFrameGameObject.setTexture(gl, CURRENT_KIT.frameTextureURI.toString(),CURRENT_KIT.frameNormalMapURI.toString() //current kit board texture and normal map
             );
-        boardFrameGameObject.setYaw(45);
+        boardFrameGameObject.setYaw(45); //board is rotated at 45 degrees
         boardFrameGameObject.setScale(1);
         Scene[1] = boardFrameGameObject;
     }
@@ -426,19 +440,22 @@ async function main() {
     gl.enable(gl.CULL_FACE);
 
     getSkyboxAttributesAndUniforms();
-    loadSkyBox();
+    loadSkyBox(); //load skybox first time
 
 
     //==========================================================================================================================================
     //* ==========================================================================================================================================
 
     let clickedState = false;
+
+    //FOR EACH FRAME
     function render(time) {
         time *= 0.001;  // convert to seconds
 
-        computeCameraDiff();
+        computeCameraDiff(); //how much user decided to move the camera
         camera_angles.phi += camera_diff.x;
         camera_angles.omega += camera_diff.y;
+
         if(camera_angles.omega < CAMERA_BOTTOM_OMEGA) camera_angles.omega = CAMERA_BOTTOM_OMEGA;
         if(camera_angles.omega > CAMERA_TOP_OMEGA) camera_angles.omega = CAMERA_TOP_OMEGA;
         radius = CAMERA_SPHERE_RADIUS/camera_depth;
@@ -492,23 +509,24 @@ async function main() {
 
         gl.bindVertexArray(skyboxVao);
         gl.depthFunc(gl.LEQUAL);
-        gl.drawArrays(gl.TRIANGLES, 0, 1*6);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
 
         //* ==========================================================================================================================================
 
         // raycasting transformations: from pixel to position
-        if(clickedState) {
-            let ray_clip = [ray_nds[0], ray_nds[1], -1, 1];
+        if(clickedState) { //if user has clicked somewhere
+            let ray_clip = [ray_nds[0], ray_nds[1], -1, 1]; //point of the canvas that has been clicked
+
+            //convert clicked point on screen to 3D world point
             let ray_eye = utils.multiplyMatrixVector(m4.inverse(projectionMatrix), ray_clip);
             ray_eye = [ray_eye[0], ray_eye[1], -1, 0];
             let ray_wor = utils.multiplyMatrixVector(utils.invertMatrix(viewMatrix), ray_eye).slice(0, 3);
-            utils.normalize(ray_wor, ray_wor);
+            utils.normalize(ray_wor, ray_wor); //ray_wor is a ray vector from screen to 3D world clicked point
 
-            // coordinate on the board plane
+            // coordinate on the board plane (intersection of ray with board plane)
             const intersection = raycast.linePlaneIntersection(boardPlane, cameraPosition, ray_wor);
-            selectedSquare = getClosestSquare(intersection);
+            selectedSquare = getClosestSquare(intersection); //from the intersection compute closest square
 
-            //testPawn.setPosition(intersection[0], intersection[1], intersection[2]);
             clickedState = false;
             //console.log(selectedSquare);
         }
@@ -565,6 +583,8 @@ async function main() {
         })
         requestAnimationFrame(render);
     }
+
+    //raycast listener
     gl.canvas.addEventListener('mousedown', (e) => {
         const canvas = gl.canvas;
         const rect = canvas.getBoundingClientRect();
@@ -573,10 +593,10 @@ async function main() {
 
         clipX = x / rect.width * 2 - 1;
         clipY = 1 - y / rect.height * 2;
-        ray_nds = [clipX, clipY, 1];
+        ray_nds = [clipX, clipY, 1]; //clip y and x are pixel coordinates of clicked point, with respect of canvas origin
         clickedState = true;
     });
-    requestAnimationFrame(render);
+    requestAnimationFrame(render); //first request
 }
 
 main();
