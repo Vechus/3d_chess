@@ -11,8 +11,8 @@ uniform vec4 ambientLight;		    // material ambient color/light
 uniform vec4 specularColor;		// specular color
 uniform vec4 emit;			    // emitted color
 
-uniform vec3 eyePosition;		    // looking direction
-uniform vec3 lightDirectionVector;
+uniform vec3 eyePosition;
+uniform vec3 lightDirectionVector; //directional light
 uniform vec4 lightColor;
 
 uniform vec3 spotLightPosition;
@@ -78,7 +78,8 @@ vec3 lookupNormalMap() {
 
     // obtain normal from normal map in range [0,1]
     vec3 normalLookup = texture(u_normalMap, uvFS).rgb;
-    vec3 m = normalize(normalLookup * 2.0 - 1.0);
+
+    vec3 m = normalize(normalLookup * 2.0 - 1.0); //map between -1 and 1
 
     mat3 tbn = computeTBNMatrix(fsPosition, uvFS, normalize(fsNormal));
     return normalize(tbn * m);
