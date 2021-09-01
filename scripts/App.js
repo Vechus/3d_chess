@@ -476,6 +476,8 @@ async function main() {
             document.getElementById("pys").value,
             document.getElementById("pzs").value];
         let inputSpotLightDecay = document.getElementById("decays").value;
+        let spotLightConeIn = document.getElementById("conein").value;
+        let spotLightConeOut = document.getElementById("coneout").value;
 
         let inputPointLightPosition = [document.getElementById("px").value,
             document.getElementById("py").value,
@@ -570,7 +572,7 @@ async function main() {
 
 
         let directionalLight = { direction : lDirectionVector, color : directionalLightColor }
-        let spotLight = { position: inputSpotLightPosition, direction: inputSpotLightDirection, color : spotLightColor, decay : inputSpotLightDecay, cIN : 100/100, cOUT: 20 }
+        let spotLight = { position: inputSpotLightPosition, direction: inputSpotLightDirection, color : spotLightColor, decay : inputSpotLightDecay, cIN : spotLightConeIn/100, cOUT: spotLightConeOut }
         let pointLight = { position: inputPointLightPosition, color: pointLightColor}
         let ambientColorHtml = getColorFromHtml("ambient-light-color");
 
