@@ -46,7 +46,7 @@ vec4 spotLightComputeColor(vec3 Pos, vec3 fs_pos, float targetDistance, float De
     vec3 lightDir =  normalize(Pos - fs_pos); //light direction is computed as the same as for point light
     vec4 lightColor = spotLightColor * pow( ( (targetDistance) / length(Pos - fs_pos) ) , Decay) * clamp(
 
-    (   (dot(normalize(Pos - fs_pos), Dir)   - cos(radians(ConeOut/2.0)) ) / (  cos(radians(ConeIn/2.0))  - cos(radians(ConeOut/2.0))  )
+    (   (dot(normalize(Pos - fs_pos), Dir)   - cos(radians(ConeOut/2.0)) ) / (  cos(radians((ConeOut/2.0)*ConeIn))  - cos(radians(ConeOut/2.0))  )
     ) //value to be clamped
 
     , 0.0, 1.0); //clamp

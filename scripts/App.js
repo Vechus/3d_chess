@@ -570,7 +570,7 @@ async function main() {
 
 
         let directionalLight = { direction : lDirectionVector, color : directionalLightColor }
-        let spotLight = { position: inputSpotLightPosition, direction: inputSpotLightDirection, color : spotLightColor, decay : inputSpotLightDecay, cIN : 20, cOUT: 56 }
+        let spotLight = { position: inputSpotLightPosition, direction: inputSpotLightDirection, color : spotLightColor, decay : inputSpotLightDecay, cIN : 100/100, cOUT: 20 }
         let pointLight = { position: inputPointLightPosition, color: pointLightColor}
         let ambientColorHtml = getColorFromHtml("ambient-light-color");
 
