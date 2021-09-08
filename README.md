@@ -4,10 +4,7 @@ Computer Graphics final project
 
 **Demo**: https://vechus.github.io/3d_chess/html/index.html
 
-1. Install the js dependencies. We use `npm` as package manager:
-    ```
-    npm install 
-    ```
+1. All needed files are already in the repository
 2. Open the file `index.html`
 3. Enjoy!
 
